@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="dictionary")
-public class Word {
+public class Word implements Comparable<Word> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -15,10 +15,13 @@ public class Word {
     @Column(name="translation", nullable = false)
     private String translation;
 
-
     @Column(name="level")
     @Enumerated(EnumType.STRING)
     private Level level;
+
+    public enum Criterion{
+       WORD, TRANSLATION, LEVEL
+    }
 
     public String getWord() {
         return word;
@@ -51,4 +54,11 @@ public class Word {
     public void setLevel(Level level) {
         this.level = level;
     }
+
+    @Override
+    public int compareTo(Word o) {
+        return word.compareTo(o.getWord());
+    }
 }
+
+
