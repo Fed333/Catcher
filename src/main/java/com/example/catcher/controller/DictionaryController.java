@@ -1,6 +1,7 @@
 package com.example.catcher.controller;
 
 import com.example.catcher.algorithms.SortOrder;
+import com.example.catcher.algorithms.Sorts;
 import com.example.catcher.domain.Level;
 import com.example.catcher.domain.Word;
 import com.example.catcher.repos.WordRepo;
@@ -10,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static com.example.catcher.algorithms.Sorts.*;
 import static com.example.catcher.domain.Word.Criterion;
 
 import java.util.*;
@@ -94,29 +96,36 @@ public class DictionaryController {
     private List<Word> sortRecords(List<Word> records, Word.Criterion criterion, SortOrder order, String languageFilter) {
         if (order.equals(SortOrder.ASC)) {
             if(criterion.equals(Criterion.LEVEL)){
-                records.sort(Comparator.comparing(Word::getLevel));
+//                records.sort(Comparator.comparing(Word::getLevel));
+                Comparator<Word> cmp = Comparator.comparing(Word::getLevel);
+                records = Sorts.qSort(records, cmp);
             }
             else if (criterion.equals(Criterion.WORD)){
                 Comparator<Word> cmp = (languageFilter.equalsIgnoreCase("English"))?Comparator.comparing(Word::getWord):Comparator.comparing(Word::getTranslation);
-                records.sort(cmp);
+//                records.sort(cmp);
+                records = Sorts.qSort(records, cmp);
             }
             else if(criterion.equals(Criterion.TRANSLATION)){
                 Comparator<Word> cmp = (languageFilter.equalsIgnoreCase("Ukrainian"))?Comparator.comparing(Word::getWord):Comparator.comparing(Word::getTranslation);
-                records.sort(cmp);
+//                records.sort(cmp);
+                records = Sorts.qSort(records, cmp);
             }
         }
         else if(order.equals(SortOrder.DESC)){
             if(criterion.equals(Criterion.LEVEL)){
                 Comparator<Word> cmp = (w1, w2)->w2.getLevel().compareTo(w1.getLevel());
-                records.sort(cmp);
+//                records.sort(cmp);
+                records = Sorts.qSort(records, cmp);
             }
             else if (criterion.equals(Criterion.WORD)){
                 Comparator<Word> cmp = (languageFilter.equalsIgnoreCase("English"))?(w1, w2) -> w2.getWord().compareTo(w1.getWord()):(w1, w2) -> w2.getTranslation().compareTo(w1.getTranslation());
-                records.sort(cmp);
+//                records.sort(cmp);
+                records = Sorts.qSort(records, cmp);
             }
             else if(criterion.equals(Criterion.TRANSLATION)){
                 Comparator<Word> cmp = (languageFilter.equalsIgnoreCase("Ukrainian"))?(w1, w2) -> w2.getWord().compareTo(w1.getWord()):(w1, w2) -> w2.getTranslation().compareTo(w1.getTranslation());
-                records.sort(cmp);
+//                records.sort(cmp);
+                records = Sorts.qSort(records, cmp);
             }
         }
         return records;
