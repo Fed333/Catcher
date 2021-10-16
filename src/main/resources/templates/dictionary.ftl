@@ -13,7 +13,7 @@
 <!--                   removing of redundant attribute from DOM using JS-->
                     <script>UkrainianOption.removeAttribute('selected');</script>
                     <#elseif languageFilter == "Ukrainian">
-                    <script> EnglishOption.removeAttribute('selected');</script>
+                    <script>EnglishOption.removeAttribute('selected');</script>
                     </#if>
                 </select>
             </div>
@@ -69,17 +69,20 @@
 
         <div class="form-group row">
             <div class="col-2">
-            <button class="btn btn-primary" disabled>
-                Сортування
-            </button>
+                <button class="btn btn-primary"  name="collapseSortSettingsButton" value="on" type="button" data-toggle="collapse" data-target="#sortSettings" aria-controls="sortSettings" id="collapseSortButton">
+                    Сортування
+                </button>
+
             </div>
         </div>
+        <div id="sortSettings">
+
 
             <div class="form-group row" >
 
                 <label class="col-sm-1 col-form-label">Критерій</label>
                 <div class="col-4">
-                    <select class="form-control" name="sortCriterion" id="sortCriterionSelect" onchange="document.getElementById('editViewForm').submit()">
+                    <select class="form-control" name="sortCriterion" id="sortCriterionSelect">
                         <option value="None" id="noneOption">Відсутній</option>
                         <option value="Word" id="wordOption">Слово</option>
                         <option value="Translation" id="translationOption">Переклад</option>
@@ -93,6 +96,8 @@
                     <#elseif sortCriterion=="Level">
                         <script>levelOption.setAttribute('selected', 'selected')</script>
                     </#if>
+                <script src="/static/sortButtonAction.js"></script>
+                <script src="/static/sortSelectAction.js"></script>
                 </div>
                 <label class=" col-sm-1 col-form-label">Порядок</label>
                 <div class="col-4">
@@ -110,7 +115,7 @@
                         <script>sortOrderSelect.setAttribute('disabled', 'disabled')</script>
                     </#if>
                 </div>
-
+            </div>
         </div>
     </form>
 </div>
@@ -137,4 +142,5 @@
     </tbody>
 
 </table>
+
 </@c.page>
