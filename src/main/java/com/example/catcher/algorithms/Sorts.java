@@ -1,14 +1,10 @@
 package com.example.catcher.algorithms;
 
-import com.example.catcher.domain.Word;
-
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Sorts {
 
+    private static Random rnd = new Random();
     public static <T extends Comparable<T>> List<T> qSort(List<T> l){
         return qSort(l, T::compareTo);
 
@@ -20,8 +16,8 @@ public class Sorts {
 
         List<T> smaller = new LinkedList<>();
         List<T> bigger = new LinkedList<>();
+        T pivot = l.remove(rnd.nextInt(l.size()));
         Iterator<T> it = l.iterator();
-        T pivot = it.next();
         while(it.hasNext()){
             T el = it.next();
             if (cmp.compare(el, pivot) > 0){   //el > pivot

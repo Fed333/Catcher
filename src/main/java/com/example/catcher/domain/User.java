@@ -51,6 +51,7 @@ public class User implements UserDetails {
     public boolean isAdmin(){
         return getRoles().contains(Role.ADMIN);
     }
+    public boolean isTeacher(){ return getRoles().contains(Role.TEACHER); }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

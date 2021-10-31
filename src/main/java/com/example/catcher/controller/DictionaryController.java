@@ -1,29 +1,30 @@
 package com.example.catcher.controller;
 
-import com.example.catcher.algorithms.SortOrder;
-import com.example.catcher.algorithms.Sorts;
 import com.example.catcher.domain.Level;
 import com.example.catcher.domain.Word;
-import com.example.catcher.repos.WordRepo;
+import com.example.catcher.service.WordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import static com.example.catcher.algorithms.Sorts.*;
-import static com.example.catcher.domain.Word.Criterion;
-
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.IOException;
+import java.util.List;
 
 @Controller
+@RequestMapping("/dictionary")
 public class DictionaryController {
-    @Autowired
-    private WordRepo wordRepo;
 
-    @GetMapping("/dictionary")
+    @Autowired
+    private WordService wordService;
+
+    @Value("${words.path}")
+    private String wordsPath;
+
+    @GetMapping
     public String dictionary(
             @RequestParam(required = false, defaultValue = "English", name="languageFilter") String languageFilter,
             @RequestParam(required = false, defaultValue = "", name="wordFilter") String wordFilter,
@@ -33,52 +34,11 @@ public class DictionaryController {
             @RequestParam(required = false, defaultValue = "off", name="b2") String b2,
             @RequestParam(required = false, defaultValue = "None", name="sortCriterion") String sortCriterion,
             @RequestParam(required = false, defaultValue = "Asc", name="sortOrder") String sortOrder,
+            @RequestParam(required = false, defaultValue = "false", name="displayAddForm") String showAddForm,
             Model model
     ){
-        List<Word> words = new LinkedList<>();
-        Set<Level> levelsFilter = new HashSet<>();
 
-        if (a1.equalsIgnoreCase("on")){
-            levelsFilter.add(Level.A1);
-        }
-
-        if (a2.equalsIgnoreCase("on")){
-            levelsFilter.add(Level.A2);
-        }
-
-        if (b1.equalsIgnoreCase("on")){
-            levelsFilter.add(Level.B1);
-        }
-
-        if (b2.equalsIgnoreCase("on")){
-            levelsFilter.add(Level.B2);
-        }
-
-        if (wordFilter!= null && !wordFilter.isEmpty()) {
-            if (languageFilter.equals("English")) {
-                words = searchBy(wordFilter, levelsFilter, Word::getWord);
-            }
-            else if (languageFilter.equals("Ukrainian")){
-                words=searchBy(wordFilter, levelsFilter, Word::getTranslation);
-            }
-        }
-        else{
-            Iterable<Word> all = wordRepo.findAll();
-            for(Word w: all){
-                if (levelsFilter.contains(w.getLevel())){
-                    words.add(w);
-                }
-            }
-        }
-        try{
-
-            Criterion criterion = Criterion.valueOf(sortCriterion.toUpperCase());
-            SortOrder order = SortOrder.valueOf(sortOrder.toUpperCase());
-            words = sortRecords(words, criterion, order, languageFilter);
-        }
-        catch(IllegalStateException e){ }
-        catch(Exception e){}
-
+        List<Word> words = wordService.searchWords(languageFilter, wordFilter, a1, a2, b1, b2, sortCriterion, sortOrder);
 
         model.addAttribute("words", words);
         model.addAttribute("languageFilter", languageFilter);
@@ -89,77 +49,56 @@ public class DictionaryController {
         model.addAttribute("b2", b2);
         model.addAttribute("sortCriterion", sortCriterion);
         model.addAttribute("sortOrder", sortOrder);
+        model.addAttribute("showAddForm", showAddForm);
 
         return "dictionary";
     }
 
-    private List<Word> sortRecords(List<Word> records, Word.Criterion criterion, SortOrder order, String languageFilter) {
-        if (order.equals(SortOrder.ASC)) {
-            if(criterion.equals(Criterion.LEVEL)){
-//                records.sort(Comparator.comparing(Word::getLevel));
-                Comparator<Word> cmp = Comparator.comparing(Word::getLevel);
-                records = Sorts.qSort(records, cmp);
-            }
-            else if (criterion.equals(Criterion.WORD)){
-                Comparator<Word> cmp = (languageFilter.equalsIgnoreCase("English"))?Comparator.comparing(Word::getWord):Comparator.comparing(Word::getTranslation);
-//                records.sort(cmp);
-                records = Sorts.qSort(records, cmp);
-            }
-            else if(criterion.equals(Criterion.TRANSLATION)){
-                Comparator<Word> cmp = (languageFilter.equalsIgnoreCase("Ukrainian"))?Comparator.comparing(Word::getWord):Comparator.comparing(Word::getTranslation);
-//                records.sort(cmp);
-                records = Sorts.qSort(records, cmp);
+    @GetMapping("{word}")
+    @PreAuthorize("hasAuthority('TEACHER')")
+    public String wordEditForm(
+            @PathVariable Word word,
+            Model model
+    ){
+        model.addAttribute("word", word);
+        return "wordEdit";
+    }
+    @PostMapping("/edit")
+    @PreAuthorize("hasAuthority('TEACHER')")
+    public String editWord(
+            @RequestParam("wordId") Word word,
+            @RequestParam(name="word") String meaning,
+            @RequestParam(name="translation") String translation,
+            @RequestParam(name="level") Level level,
+            @RequestParam(name="wordImage") MultipartFile file,
+
+            Model model
+    ){
+        if (!wordService.update(word, meaning, translation, level, file)){
+            model.addAttribute("message", "Не коректно заповненні поля");
+        }
+        return "redirect:/dictionary?a1=on&a2=on&b1=on&b2=on";
+    }
+
+    @PostMapping
+    public String addWord(
+        @RequestParam(name="word") String meaning,
+        @RequestParam(name="translation") String translation,
+        @RequestParam(name="level") Level level,
+        @RequestParam(name="wordImage") MultipartFile imgFile,
+        Model model
+    ) throws IOException {
+        Word word = wordService.createWord(meaning, translation, level, imgFile);
+        if (word != null){
+            if (!wordService.addWord(word)) {
+                model.addAttribute("message", "Слово " + word.getWord() + " вже присутнє в базі даних");
             }
         }
-        else if(order.equals(SortOrder.DESC)){
-            if(criterion.equals(Criterion.LEVEL)){
-                Comparator<Word> cmp = (w1, w2)->w2.getLevel().compareTo(w1.getLevel());
-//                records.sort(cmp);
-                records = Sorts.qSort(records, cmp);
-            }
-            else if (criterion.equals(Criterion.WORD)){
-                Comparator<Word> cmp = (languageFilter.equalsIgnoreCase("English"))?(w1, w2) -> w2.getWord().compareTo(w1.getWord()):(w1, w2) -> w2.getTranslation().compareTo(w1.getTranslation());
-//                records.sort(cmp);
-                records = Sorts.qSort(records, cmp);
-            }
-            else if(criterion.equals(Criterion.TRANSLATION)){
-                Comparator<Word> cmp = (languageFilter.equalsIgnoreCase("Ukrainian"))?(w1, w2) -> w2.getWord().compareTo(w1.getWord()):(w1, w2) -> w2.getTranslation().compareTo(w1.getTranslation());
-//                records.sort(cmp);
-                records = Sorts.qSort(records, cmp);
-            }
+        else{
+            model.addAttribute("message", "Некоректно заповненні поля");
         }
-        return records;
+
+        return "redirect:/dictionary?a1=on&a2=on&b1=on&b2=on&displayAddForm=true";
     }
-
-    private List<Word> searchBy(String filter, Set<Level> levelsFilter, WordAttributeCriterion criterion){
-
-        LinkedList<Word> found = new LinkedList<>();
-        Pattern pattern = Pattern.compile(filter, Pattern.CASE_INSENSITIVE);
-        Iterable<Word> words = wordRepo.findAll();
-        for(Word w: words){
-            Matcher matcher = pattern.matcher(criterion.byCriterion(w));
-            if (levelsFilter.contains(w.getLevel()) && matcher.find()){
-                found.add(w);
-            }
-        }
-        return found;
-    }
-
-    private Iterable<Word> searchBy(String filter, FindWordCriterion criterion){
-        List<Word> words = new LinkedList<>();
-        words.add(criterion.byCriterion(wordRepo, filter));
-        return words;
-    }
-
-    private interface FindWordCriterion {
-        Word byCriterion(WordRepo wordRepo, String filter);
-    }
-
-    private interface WordAttributeCriterion{
-        String byCriterion(Word word);
-    }
-
-
-
 
 }

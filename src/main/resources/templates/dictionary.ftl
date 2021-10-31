@@ -1,9 +1,56 @@
 <#import "parts/common.ftl" as c>
-
+<#include "parts/security.ftl">
 <@c.page "Dictionary">
 
 <div class="form-group">
+    <#if isTeacher>
+    <div class="form-group row">
+        <div class="col-2">
+            <button class="btn btn-primary" name="collapseAddWordButton" type="button" data-toggle="collapse" data-target="#addWordForm" aria-controls="addWordForm" aria-expanded="false" id="collapseAddWordButton">
+                Додати слово
+            </button>
+        </div>
+    </div>
+    <form action="/dictionary" method="post" enctype="multipart/form-data" id="addForm">
+        <div id="addWordForm" class="collapse">
+            <input type="hidden" name="_csrf" value="${_csrf.token}">
+            <div class="form-group row">
+                <label class="col-1 col-form-label">Слово</label>
+                <div class="col-3">
+                    <input type="text" name="word" class="form-control" placeholder="Введіть слово">
+                </div>
+                <label class="col-1 col-form-label">Переклад</label>
+                <div class="col-3">
+                    <input type="text" name="translation" class="form-control" placeholder="Введіть переклад">
+                </div>
+                <label class="col-1 col-form-label">Рівень</label>
+                <div class="col-2">
+                     <select class="form-control" name="level" id="wordLevelSelect">
+                         <option value="A1" id="levelA1option">A1</option>
+                         <option value="A2" id="levelA2option">A2</option>
+                         <option value="B1" id="levelB1option">B1</option>
+                         <option value="B2" id="levelB2option">B2</option>
+                     </select>
+                </div>
+
+            </div>
+            <div class="form-group">
+                <div class="custom-file">
+                    <input type="file" name="wordImage" id="wordImageFile">
+                    <label class="custom-file-label" for="wordImageFile">Зображення</label>
+                </div>
+            </div>
+
+            <label class="col-form label">${message!""}</label>
+            <button type="submit" class="btn btn-outline-success">Додати</button>
+        </div>
+
+    </form>
+
+    </#if>
     <form action="/dictionary" method="get" id="editViewForm">
+        <input type="hidden" name="displayAddForm" id="showAddFormFlag" value="${showAddForm!"false"}">
+        <script src="/static/displayAddWordCollapse.js"></script>
         <div class="form-group row">
             <div class="col-2">
                 <select class="form-control" name="languageFilter" id="languageSelect" onchange="document.getElementById('editViewForm').submit()">
@@ -72,12 +119,9 @@
                 <button class="btn btn-primary"  name="collapseSortSettingsButton" value="on" type="button" data-toggle="collapse" data-target="#sortSettings" aria-controls="sortSettings" id="collapseSortButton">
                     Сортування
                 </button>
-
             </div>
         </div>
         <div id="sortSettings">
-
-
             <div class="form-group row" >
 
                 <label class="col-sm-1 col-form-label">Критерій</label>
@@ -120,15 +164,25 @@
     </form>
 </div>
 
-<table class="table">
+<table class="table table-striped">
     <thead class="table-dark">
-    <tr><th>Слово</th><th>Переклад</th><th>Рівень</th></tr>
+    <tr>
+        <#if isTeacher>
+        <th>ID</th>
+        </#if>
+        <th>Слово</th>
+        <th>Переклад</th>
+        <th>Рівень</th>
+    </tr>
     </thead>
     <tbody class="table-light">
 
     <#list words as word>
     <tr>
         <#if word??>
+        <#if isTeacher>
+        <td><a href="/dictionary/${word.id}">${word.id}</a></td>
+        </#if>
         <#if languageFilter == "English">
             <td>${word.word}</td>
             <td>${word.translation}</td>
@@ -136,7 +190,9 @@
             <td>${word.translation}</td>
             <td>${word.word}</td>
         </#if>
-        <td>${word.level}</td></tr>
+        <td>${word.level}</td>
+
+    </tr>
         </#if>
     </#list>
     </tbody>
