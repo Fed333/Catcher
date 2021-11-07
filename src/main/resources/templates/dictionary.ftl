@@ -1,4 +1,5 @@
 <#import "parts/common.ftl" as c>
+<#import "parts/forms.ftl" as f>
 <#include "parts/security.ftl">
 <@c.page "Dictionary">
 
@@ -14,105 +15,20 @@
     <form action="/dictionary" method="post" enctype="multipart/form-data" id="addForm">
         <div id="addWordForm" class="collapse">
             <input type="hidden" name="_csrf" value="${_csrf.token}">
-            <div class="form-group row">
-                <label class="col-1 col-form-label">Слово</label>
-                <div class="col-3">
-                    <input type="text" name="word" class="form-control" placeholder="Введіть слово">
-                </div>
-                <label class="col-1 col-form-label">Переклад</label>
-                <div class="col-3">
-                    <input type="text" name="translation" class="form-control" placeholder="Введіть переклад">
-                </div>
-                <label class="col-1 col-form-label">Рівень</label>
-                <div class="col-2">
-                     <select class="form-control" name="level" id="wordLevelSelect">
-                         <option value="A1" id="levelA1option">A1</option>
-                         <option value="A2" id="levelA2option">A2</option>
-                         <option value="B1" id="levelB1option">B1</option>
-                         <option value="B2" id="levelB2option">B2</option>
-                     </select>
-                </div>
-
-            </div>
-            <div class="form-group">
-                <div class="custom-file">
-                    <input type="file" name="wordImage" id="wordImageFile">
-                    <label class="custom-file-label" for="wordImageFile">Зображення</label>
-                </div>
-            </div>
-
+            <@f.addWord/>
             <label class="col-form label">${message!""}</label>
             <button type="submit" class="btn btn-outline-success">Додати</button>
         </div>
-
     </form>
 
     </#if>
     <form action="/dictionary" method="get" id="editViewForm">
+        <input type="hidden" name="data" id="data_id" value="${data_id!"[]"}">
         <input type="hidden" name="displayAddForm" id="showAddFormFlag" value="${showAddForm!"false"}">
         <script src="/static/displayAddWordCollapse.js"></script>
-        <div class="form-group row">
-            <div class="col-2">
-                <select class="form-control" name="languageFilter" id="languageSelect" onchange="document.getElementById('editViewForm').submit()">
-                    <option value="English" id="EnglishOption" selected>English</option>
-                    <option value="Ukrainian" id="UkrainianOption" selected>Ukrainian</option>
-                    <#if languageFilter == "English">
-<!--                   removing of redundant attribute from DOM using JS-->
-                    <script>UkrainianOption.removeAttribute('selected');</script>
-                    <#elseif languageFilter == "Ukrainian">
-                    <script>EnglishOption.removeAttribute('selected');</script>
-                    </#if>
-                </select>
-            </div>
-            <div class="col-3">
-                <input type="text" name="wordFilter" class="form-control" placeholder="Введіть слово" value="${wordFilter!""}">
-            </div>
-            <div class="col-1">
-                <button type="submit" class="btn btn-outline-success">Пошук</button>
-            </div>
 
-        </div>
-        <div class="form-group row">
-            <div class="form-check">
-                <div class="col-4">
-                    <input type="checkbox" class="form-check-input" name="a1" id="checkBoxA1" checked>
-                    <label class="form-check-label" for="checkBoxA1">A1</label>
-                </div>
-            </div>
-            <div class="form-check">
-                <div class="col-4">
-                    <input type="checkbox" class="form-check-input" name="a2" id="checkBoxA2" checked>
-                    <label class="form-check-label" for="checkBoxA2">A2</label>
-                </div>
-            </div>
-            <div class="form-check">
-                <div class="col-4">
-                    <input type="checkbox" class="form-check-input" name="b1" id="checkBoxB1" checked>
-                    <label class="form-check-label" for="checkBoxB1">B1</label>
-                </div>
-            </div>
-            <div class="form-check">
-                <div class="col-4">
-                    <input type="checkbox" class="form-check-input" name="b2" id="checkBoxB2" checked>
-                    <label class="form-check-label" for="checkBoxB2">B2</label>
-                </div>
-            </div>
-            <#if a1 != "on">
-            <script> checkBoxA1.removeAttribute('checked');</script>
-            </#if>
-
-            <#if a2 != "on">
-            <script> checkBoxA2.removeAttribute('checked');</script>
-            </#if>
-
-            <#if b1 != "on">
-            <script> checkBoxB1.removeAttribute('checked');</script>
-            </#if>
-
-            <#if b2 != "on">
-            <script> checkBoxB2.removeAttribute('checked');</script>
-            </#if>
-        </div>
+<!--        вставляємо макрос, форму пошуку-->
+        <@f.search/>
 
         <div class="form-group row">
             <div class="col-2">
@@ -173,6 +89,7 @@
         <th>Слово</th>
         <th>Переклад</th>
         <th>Рівень</th>
+        <th></th>
     </tr>
     </thead>
     <tbody class="table-light">
@@ -191,12 +108,19 @@
             <td>${word.word}</td>
         </#if>
         <td>${word.level}</td>
+        <td>
+            <form method="post" action="/dictionary/add_to_user_vocabulary" id="form${word.id}">
+                <input type="hidden" name="wordId" id="wordId" value="${word.id}">
+                <input type="hidden" name="_csrf" value="${_csrf.token}">
+                    <a id="link${word.id}" href="#" onclick="document.getElementById('form${word.id}').submit()">Додати</a>
+            </form>
 
+        </td>
     </tr>
         </#if>
     </#list>
     </tbody>
 
 </table>
-
+<script src="disableLearnedWords.js"></script>
 </@c.page>

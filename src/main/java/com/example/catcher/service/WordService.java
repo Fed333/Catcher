@@ -197,11 +197,11 @@ public class WordService {
         return words;
     }
 
-    private interface FindWordCriterion {
+    protected interface FindWordCriterion {
         Word byCriterion(WordRepo wordRepo, String filter);
     }
 
-    private interface WordAttributeCriterion{
+    protected interface WordAttributeCriterion{
         String byCriterion(Word word);
     }
 }

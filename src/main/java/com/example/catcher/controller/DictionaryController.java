@@ -1,17 +1,26 @@
 package com.example.catcher.controller;
 
 import com.example.catcher.domain.Level;
+import com.example.catcher.domain.ProgressWord;
+import com.example.catcher.domain.User;
 import com.example.catcher.domain.Word;
+import com.example.catcher.service.UserService;
 import com.example.catcher.service.WordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Controller
@@ -20,6 +29,9 @@ public class DictionaryController {
 
     @Autowired
     private WordService wordService;
+
+    @Autowired
+    private UserService userService;
 
     @Value("${words.path}")
     private String wordsPath;
@@ -35,12 +47,21 @@ public class DictionaryController {
             @RequestParam(required = false, defaultValue = "None", name="sortCriterion") String sortCriterion,
             @RequestParam(required = false, defaultValue = "Asc", name="sortOrder") String sortOrder,
             @RequestParam(required = false, defaultValue = "false", name="displayAddForm") String showAddForm,
+            @AuthenticationPrincipal User user,
             Model model
     ){
 
         List<Word> words = wordService.searchWords(languageFilter, wordFilter, a1, a2, b1, b2, sortCriterion, sortOrder);
+        List<ProgressWord> vocabulary = user.getVocabulary();
+
+        LinkedList<Long> words_id = new LinkedList<>();
+        vocabulary.forEach(pw->{
+            words_id.add(pw.getWord().getId());
+        });
+        String strArr = words_id.toString();
 
         model.addAttribute("words", words);
+        model.addAttribute("data_id", strArr);
         model.addAttribute("languageFilter", languageFilter);
         model.addAttribute("wordFilter", wordFilter);
         model.addAttribute("a1", a1);
@@ -101,4 +122,19 @@ public class DictionaryController {
         return "redirect:/dictionary?a1=on&a2=on&b1=on&b2=on&displayAddForm=true";
     }
 
+    @PostMapping("/add_to_user_vocabulary")
+    public String addWordToUserVocabulary(
+            @AuthenticationPrincipal User user,
+            @RequestParam(name="wordId") Word word
+    )
+    {
+
+        if (userService.learnWord(user, word)) {
+            userService.save(user);
+        }
+        else{
+            System.out.println("Спроба додати вже вивчене слово");
+        }
+        return "redirect:/dictionary?a1=on&a2=on&b1=on&b2=on";
+    }
 }

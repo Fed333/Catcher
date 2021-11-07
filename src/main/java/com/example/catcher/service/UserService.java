@@ -1,7 +1,7 @@
 package com.example.catcher.service;
 
-import com.example.catcher.domain.Role;
-import com.example.catcher.domain.User;
+import com.example.catcher.algorithms.SortOrder;
+import com.example.catcher.domain.*;
 import com.example.catcher.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,8 +15,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -76,5 +77,74 @@ public class UserService implements UserDetailsService {
         user.setRoles(Collections.singleton(Role.STUDENT));
         userRepo.save(user);
         return true;
+    }
+
+    public void save(User user) {
+        userRepo.save(user);
+    }
+
+    public List<ProgressWord> search(User user, String languageFilter, String wordFilter, String a1, String a2, String b1, String b2) {
+        List<ProgressWord> vocabulary = new LinkedList<>();
+        Set<Level> levelsFilter = new HashSet<>();
+
+        if (a1.equalsIgnoreCase("on")){
+            levelsFilter.add(Level.A1);
+        }
+
+        if (a2.equalsIgnoreCase("on")){
+            levelsFilter.add(Level.A2);
+        }
+
+        if (b1.equalsIgnoreCase("on")){
+            levelsFilter.add(Level.B1);
+        }
+
+        if (b2.equalsIgnoreCase("on")){
+            levelsFilter.add(Level.B2);
+        }
+
+        if (wordFilter!= null && !wordFilter.isEmpty()) {
+            if (languageFilter.equals("English")) {
+                vocabulary = searchBy(user, wordFilter, levelsFilter, Word::getWord);
+            }
+            else if (languageFilter.equals("Ukrainian")){
+                vocabulary=searchBy(user, wordFilter, levelsFilter, Word::getTranslation);
+            }
+        }
+        else{
+            Iterable<ProgressWord> all = user.getVocabulary();
+            for(ProgressWord pw: all){
+                if (levelsFilter.contains(pw.getWord().getLevel())){
+                    vocabulary.add(pw);
+                }
+            }
+        }
+        return vocabulary;
+    }
+
+    private List<ProgressWord> searchBy(User user, String filter, Set<Level> levelsFilter, WordService.WordAttributeCriterion criterion){
+
+        LinkedList<ProgressWord> found = new LinkedList<>();
+        Pattern pattern = Pattern.compile(filter, Pattern.CASE_INSENSITIVE);
+        Iterable<ProgressWord> vocabulary = user.getVocabulary();
+        for(ProgressWord pw: vocabulary){
+            Matcher matcher = pattern.matcher(criterion.byCriterion(pw.getWord()));
+            if (levelsFilter.contains(pw.getWord().getLevel()) && matcher.find()){
+                found.add(pw);
+            }
+        }
+        return found;
+    }
+
+    public boolean learnWord(User user, Word word) {
+        List<Word> words = new LinkedList<>();
+        user.getVocabulary().forEach(pw->{
+            words.add(pw.getWord());
+        });
+        boolean isNewWord = !words.contains(word);
+        if (isNewWord){
+            user.getVocabulary().add(new ProgressWord(word, new Date()));
+        }
+        return isNewWord;
     }
 }

@@ -1,0 +1,5 @@
+a.disabled-link{
+    pointer-events: none!important;
+    cursor: default;
+    color: Gray;
+}

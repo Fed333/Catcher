@@ -1,13 +1,15 @@
 package com.example.catcher.domain;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
+
+import static com.example.catcher.domain.Level.A1;
 
 @Entity
 @Table(name="Users")
@@ -30,6 +32,12 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
+    //реляційне відношення один до багатьох
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name="user_id")
+    //хібернейт підгрузить в цю колекцію, весь словниковий запас користувача
+    private List<ProgressWord> vocabulary = new LinkedList<>();
+
     @Column(name="name")
     private String name;
 
@@ -39,6 +47,10 @@ public class User implements UserDetails {
     @Column(name="e_mail")
     private String email;
 
+    @Column(name="level")
+    @Enumerated(EnumType.STRING)
+    private Level level;
+
     @Column(name="date_of_birth")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
@@ -46,12 +58,14 @@ public class User implements UserDetails {
 
 
     public User() {
+        level = A1;
     }
 
     public boolean isAdmin(){
         return getRoles().contains(Role.ADMIN);
     }
     public boolean isTeacher(){ return getRoles().contains(Role.TEACHER); }
+    public boolean isStudent(){return getRoles().contains(Role.STUDENT);}
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -157,5 +171,17 @@ public class User implements UserDetails {
 
     public void setAvatarName(String avatarName) {
         this.avatarName = avatarName;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
+    public List<ProgressWord> getVocabulary() {
+        return vocabulary;
     }
 }

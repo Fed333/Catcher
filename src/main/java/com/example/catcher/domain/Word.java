@@ -1,6 +1,7 @@
 package com.example.catcher.domain;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name="dictionary")
@@ -69,6 +70,22 @@ public class Word implements Comparable<Word> {
     @Override
     public int compareTo(Word o) {
         return word.compareTo(o.getWord());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Word)) return false;
+        Word word1 = (Word) o;
+        return Objects.equals(id, word1.id) &&
+                Objects.equals(word, word1.word) &&
+                Objects.equals(translation, word1.translation) &&
+                level == word1.level;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, word, translation, level);
     }
 }
 

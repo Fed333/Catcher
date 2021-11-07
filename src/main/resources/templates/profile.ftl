@@ -1,5 +1,5 @@
 <#import "parts/common.ftl" as c>
-
+<#include "parts/references.ftl">
 
 <@c.page "Profile">
 
@@ -41,6 +41,9 @@
             </li>
             <li class="list-group-item">
                 <label>Телефон: ${user.phone!"-"}</label>
+            </li>
+            <li class="list-group-item">
+                <label>Рівень володіння: ${user.level?string}</label>
             </li>
         </ul>
     </div>
@@ -122,4 +125,9 @@
         </ul>
     </div>
 </div>
+
+<hr>
+<nav class="nav">
+    <a class="nav-link" href="${refUserVoc}">Мої слова</a>
+</nav>
 </@c.page>
