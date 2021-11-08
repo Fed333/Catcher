@@ -2,6 +2,7 @@ package com.example.catcher.service;
 
 import com.example.catcher.algorithms.SortOrder;
 import com.example.catcher.domain.*;
+import com.example.catcher.repos.ProgressWordRepo;
 import com.example.catcher.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +24,9 @@ import java.util.regex.Pattern;
 public class UserService implements UserDetailsService {
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private ProgressWordRepo progressWordRepo;
 
     @Value("${upload.path}")
     private String uploadPath;
@@ -137,14 +141,25 @@ public class UserService implements UserDetailsService {
     }
 
     public boolean learnWord(User user, Word word) {
-        List<Word> words = new LinkedList<>();
-        user.getVocabulary().forEach(pw->{
-            words.add(pw.getWord());
+        List<Long> words = new LinkedList<>();
+        List<ProgressWord> vocabulary = user.getVocabulary();
+        vocabulary.forEach(pw -> {
+            words.add(pw.getWord().getId());
         });
-        boolean isNewWord = !words.contains(word);
+        boolean isNewWord = !words.contains(word.getId());
         if (isNewWord){
-            user.getVocabulary().add(new ProgressWord(word, new Date()));
+
+            ProgressWord pw = new ProgressWord(user, word, new Date());
+            //обов'язково зберігати цей об'єкт в бд. Інакше під час сеансу userRepo.save буде штампувати нові
+            progressWordRepo.save(pw);
+            user.getVocabulary().add(pw);
+            userRepo.save(user);
+
         }
         return isNewWord;
+    }
+
+    public User findById(Long id) {
+        return userRepo.findById(id).get();
     }
 }

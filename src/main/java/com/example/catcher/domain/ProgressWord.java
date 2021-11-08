@@ -10,9 +10,17 @@ public class ProgressWord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="word_id")
     private Word word;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="user_id")
+    private User user;
+
+    @Column(name="user_id", insertable = false, updatable = false)
+    private Long userId;
 
     @Column(name="learned_date")
     private Date learnedDate;
@@ -39,8 +47,9 @@ public class ProgressWord {
         studied = false;
     }
 
-    public ProgressWord(Word word, Date learnedDate) {
+    public ProgressWord(User user, Word word, Date learnedDate) {
         this();
+        this.user = user;
         this.word = word;
         this.learnedDate = learnedDate;
     }
@@ -96,5 +105,21 @@ public class ProgressWord {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Long getUserId(){
+        return user.getId();
     }
 }

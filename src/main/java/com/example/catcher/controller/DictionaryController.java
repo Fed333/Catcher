@@ -130,7 +130,7 @@ public class DictionaryController {
     {
 
         if (userService.learnWord(user, word)) {
-            userService.save(user);
+            System.out.println("Додано нове слово: " + word.getWord());
         }
         else{
             System.out.println("Спроба додати вже вивчене слово");
