@@ -11,9 +11,9 @@
     <!-- Bootstrap CSS -->
     <!--    підключаємо стилі Bootstrap-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="/static/styleBackground.css">
 </head>
-<body style="background-color: #ADD8E6;">
+<body>
 <#include "navbar.ftl"/>
 <div class="container mt-4">
     <#nested>
