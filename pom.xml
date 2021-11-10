@@ -39,6 +39,12 @@
             <optional>true</optional>
         </dependency>
 
+        <!--        FlyWay for db migration-->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
         <!--Database support-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
