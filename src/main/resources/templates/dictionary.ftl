@@ -3,10 +3,10 @@
 <@c.page "Dictionary">
 
 <div class="form-group">
-    <form action="/dictionary" method="get">
+    <form action="/dictionary" method="get" id="editViewForm">
         <div class="form-group row">
             <div class="col-2">
-                <select class="form-control" name="languageFilter" id="languageSelect">
+                <select class="form-control" name="languageFilter" id="languageSelect" onchange="document.getElementById('editViewForm').submit()">
                     <option value="English" id="EnglishOption" selected>English</option>
                     <option value="Ukrainian" id="UkrainianOption" selected>Ukrainian</option>
                     <#if languageFilter == "English">
@@ -20,9 +20,10 @@
             <div class="col-3">
                 <input type="text" name="wordFilter" class="form-control" placeholder="Введіть слово" value="${wordFilter!""}">
             </div>
-            <div class="col-2">
+            <div class="col-1">
                 <button type="submit" class="btn btn-outline-success">Пошук</button>
             </div>
+
         </div>
         <div class="form-group row">
             <div class="form-check">
@@ -64,6 +65,51 @@
             <#if b2 != "on">
             <script> checkBoxB2.removeAttribute('checked');</script>
             </#if>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-2">
+            <button class="btn btn-primary" disabled>
+                Сортування
+            </button>
+            </div>
+        </div>
+
+            <div class="form-group row" >
+
+                <label class="col-sm-1 col-form-label">Критерій</label>
+                <div class="col-4">
+                    <select class="form-control" name="sortCriterion" id="sortCriterionSelect" onchange="document.getElementById('editViewForm').submit()">
+                        <option value="None" id="noneOption">Відсутній</option>
+                        <option value="Word" id="wordOption">Слово</option>
+                        <option value="Translation" id="translationOption">Переклад</option>
+                        <option value="Level" id="levelOption">Рівень</option>
+                    </select>
+
+                    <#if sortCriterion=="Word">
+                        <script>wordOption.setAttribute('selected', 'selected')</script>
+                    <#elseif sortCriterion=="Translation">
+                        <script>translationOption.setAttribute('selected', 'selected')</script>
+                    <#elseif sortCriterion=="Level">
+                        <script>levelOption.setAttribute('selected', 'selected')</script>
+                    </#if>
+                </div>
+                <label class=" col-sm-1 col-form-label">Порядок</label>
+                <div class="col-4">
+                    <select class="form-control" name="sortOrder" id="sortOrderSelect" onchange="document.getElementById('editViewForm').submit()">
+                        <option value="asc" id="ascOption" >По зростанню</option>
+                        <option value="desc" id="descOption">По спаданню</option>
+                    </select>
+                    <#if sortCriterion!="None">
+                        <#if sortOrder="asc">
+                            <script> ascOption.setAttribute('selected', 'selected');</script>
+                        <#elseif sortOrder="desc">
+                            <script>descOption.setAttribute('selected', 'selected');</script>
+                        </#if>
+                    <#else>
+                        <script>sortOrderSelect.setAttribute('disabled', 'disabled')</script>
+                    </#if>
+                </div>
 
         </div>
     </form>
