@@ -133,7 +133,7 @@ public class DictionaryController {
             System.out.println("Додано нове слово: " + word.getWord());
         }
         else{
-            System.out.println("Спроба додати вже вивчене слово");
+            System.out.println("Спроба додати вже вивчене слово: " + word.getWord());
         }
         return "redirect:/dictionary?a1=on&a2=on&b1=on&b2=on";
     }
