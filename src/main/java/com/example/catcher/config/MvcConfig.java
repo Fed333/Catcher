@@ -17,6 +17,9 @@ public class MvcConfig implements WebMvcConfigurer {
     @Value("${basic.path}")
     private String basicPath;
 
+    @Value("${words.path}")
+    private String wordsPath;
+
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/login").setViewName("login");
@@ -28,6 +31,8 @@ public class MvcConfig implements WebMvcConfigurer {
                 .addResourceLocations("file://" + basicPath + "/");
         registry.addResourceHandler("/img/**")
                 .addResourceLocations("file://" + uploadPath + "/" );
+        registry.addResourceHandler("/word_img/**")
+                .addResourceLocations("file://" + wordsPath + "/");
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/");
     }

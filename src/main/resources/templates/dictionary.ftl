@@ -1,83 +1,43 @@
 <#import "parts/common.ftl" as c>
-
+<#import "parts/forms.ftl" as f>
+<#include "parts/security.ftl">
 <@c.page "Dictionary">
 
 <div class="form-group">
+    <#if isTeacher>
+    <div class="form-group row">
+        <div class="col-2">
+            <button class="btn btn-primary" name="collapseAddWordButton" type="button" data-toggle="collapse" data-target="#addWordForm" aria-controls="addWordForm" aria-expanded="false" id="collapseAddWordButton">
+                Додати слово
+            </button>
+        </div>
+    </div>
+    <form action="/dictionary" method="post" enctype="multipart/form-data" id="addForm">
+        <div id="addWordForm" class="collapse">
+            <input type="hidden" name="_csrf" value="${_csrf.token}">
+            <@f.addWord/>
+            <label class="col-form label">${message!""}</label>
+            <button type="submit" class="btn btn-outline-success">Додати</button>
+        </div>
+    </form>
+
+    </#if>
     <form action="/dictionary" method="get" id="editViewForm">
-        <div class="form-group row">
-            <div class="col-2">
-                <select class="form-control" name="languageFilter" id="languageSelect" onchange="document.getElementById('editViewForm').submit()">
-                    <option value="English" id="EnglishOption" selected>English</option>
-                    <option value="Ukrainian" id="UkrainianOption" selected>Ukrainian</option>
-                    <#if languageFilter == "English">
-<!--                   removing of redundant attribute from DOM using JS-->
-                    <script>UkrainianOption.removeAttribute('selected');</script>
-                    <#elseif languageFilter == "Ukrainian">
-                    <script>EnglishOption.removeAttribute('selected');</script>
-                    </#if>
-                </select>
-            </div>
-            <div class="col-3">
-                <input type="text" name="wordFilter" class="form-control" placeholder="Введіть слово" value="${wordFilter!""}">
-            </div>
-            <div class="col-1">
-                <button type="submit" class="btn btn-outline-success">Пошук</button>
-            </div>
+        <input type="hidden" name="data" id="data_id" value="${data_id!"[]"}">
+        <input type="hidden" name="displayAddForm" id="showAddFormFlag" value="${showAddForm!"false"}">
+        <script src="/static/displayAddWordCollapse.js"></script>
 
-        </div>
-        <div class="form-group row">
-            <div class="form-check">
-                <div class="col-4">
-                    <input type="checkbox" class="form-check-input" name="a1" id="checkBoxA1" checked>
-                    <label class="form-check-label" for="checkBoxA1">A1</label>
-                </div>
-            </div>
-            <div class="form-check">
-                <div class="col-4">
-                    <input type="checkbox" class="form-check-input" name="a2" id="checkBoxA2" checked>
-                    <label class="form-check-label" for="checkBoxA2">A2</label>
-                </div>
-            </div>
-            <div class="form-check">
-                <div class="col-4">
-                    <input type="checkbox" class="form-check-input" name="b1" id="checkBoxB1" checked>
-                    <label class="form-check-label" for="checkBoxB1">B1</label>
-                </div>
-            </div>
-            <div class="form-check">
-                <div class="col-4">
-                    <input type="checkbox" class="form-check-input" name="b2" id="checkBoxB2" checked>
-                    <label class="form-check-label" for="checkBoxB2">B2</label>
-                </div>
-            </div>
-            <#if a1 != "on">
-            <script> checkBoxA1.removeAttribute('checked');</script>
-            </#if>
-
-            <#if a2 != "on">
-            <script> checkBoxA2.removeAttribute('checked');</script>
-            </#if>
-
-            <#if b1 != "on">
-            <script> checkBoxB1.removeAttribute('checked');</script>
-            </#if>
-
-            <#if b2 != "on">
-            <script> checkBoxB2.removeAttribute('checked');</script>
-            </#if>
-        </div>
+<!--        вставляємо макрос, форму пошуку-->
+        <@f.search/>
 
         <div class="form-group row">
             <div class="col-2">
                 <button class="btn btn-primary"  name="collapseSortSettingsButton" value="on" type="button" data-toggle="collapse" data-target="#sortSettings" aria-controls="sortSettings" id="collapseSortButton">
                     Сортування
                 </button>
-
             </div>
         </div>
         <div id="sortSettings">
-
-
             <div class="form-group row" >
 
                 <label class="col-sm-1 col-form-label">Критерій</label>
@@ -120,15 +80,26 @@
     </form>
 </div>
 
-<table class="table">
+<table class="table table-striped">
     <thead class="table-dark">
-    <tr><th>Слово</th><th>Переклад</th><th>Рівень</th></tr>
+    <tr>
+        <#if isTeacher>
+        <th>ID</th>
+        </#if>
+        <th>Слово</th>
+        <th>Переклад</th>
+        <th>Рівень</th>
+        <th></th>
+    </tr>
     </thead>
     <tbody class="table-light">
 
     <#list words as word>
     <tr>
         <#if word??>
+        <#if isTeacher>
+        <td><a href="/dictionary/${word.id}">${word.id}</a></td>
+        </#if>
         <#if languageFilter == "English">
             <td>${word.word}</td>
             <td>${word.translation}</td>
@@ -136,11 +107,20 @@
             <td>${word.translation}</td>
             <td>${word.word}</td>
         </#if>
-        <td>${word.level}</td></tr>
+        <td>${word.level}</td>
+        <td>
+            <form method="post" action="/dictionary/add_to_user_vocabulary" id="form${word.id}">
+                <input type="hidden" name="wordId" id="wordId" value="${word.id}">
+                <input type="hidden" name="_csrf" value="${_csrf.token}">
+                    <a id="link${word.id}" href="#" onclick="document.getElementById('form${word.id}').submit()">Додати</a>
+            </form>
+
+        </td>
+    </tr>
         </#if>
     </#list>
     </tbody>
 
 </table>
-
+<script src="disableLearnedWords.js"></script>
 </@c.page>

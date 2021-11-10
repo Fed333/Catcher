@@ -1,12 +1,13 @@
 package com.example.catcher.domain;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name="dictionary")
 public class Word implements Comparable<Word> {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name="word", unique = true, nullable = false)
@@ -18,6 +19,9 @@ public class Word implements Comparable<Word> {
     @Column(name="level")
     @Enumerated(EnumType.STRING)
     private Level level;
+
+    @Column(name="img_name")
+    private String imgName;
 
     public enum Criterion{
        WORD, TRANSLATION, LEVEL
@@ -55,9 +59,33 @@ public class Word implements Comparable<Word> {
         this.level = level;
     }
 
+    public String getImgName() {
+        return imgName;
+    }
+
+    public void setImgName(String imgName) {
+        this.imgName = imgName;
+    }
+
     @Override
     public int compareTo(Word o) {
         return word.compareTo(o.getWord());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Word)) return false;
+        Word word1 = (Word) o;
+        return Objects.equals(id, word1.id) &&
+                Objects.equals(word, word1.word) &&
+                Objects.equals(translation, word1.translation) &&
+                level == word1.level;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, word, translation, level);
     }
 }
 
