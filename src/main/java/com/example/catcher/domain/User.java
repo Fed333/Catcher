@@ -52,6 +52,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Level level;
 
+    @Column(name = "score")
+    private Integer score;
+
     @Column(name="date_of_birth")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
@@ -184,5 +187,17 @@ public class User implements UserDetails {
 
     public List<ProgressWord> getVocabulary() {
         return vocabulary;
+    }
+
+    public void setVocabulary(List<ProgressWord> vocabulary) {
+        this.vocabulary = vocabulary;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
     }
 }

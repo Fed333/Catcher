@@ -48,6 +48,7 @@ CREATE TABLE public.users (
     phone CHARACTER VARYING(13),
     avatar_name CHARACTER VARYING(255),
     level CHARACTER VARYING(255),
+    score INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (id)
 );
 
