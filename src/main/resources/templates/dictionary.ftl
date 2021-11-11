@@ -3,11 +3,15 @@
 <#include "parts/security.ftl">
 <@c.page "Dictionary">
 
+<div class="col d-flex justify-content-center">
+    <h2>Словник</h2>
+</div>
+
 <div class="form-group">
     <#if isTeacher>
     <div class="form-group row">
         <div class="col-2">
-            <button class="btn btn-primary" name="collapseAddWordButton" type="button" data-toggle="collapse" data-target="#addWordForm" aria-controls="addWordForm" aria-expanded="false" id="collapseAddWordButton">
+            <button class="btn btn-primary" name="collapseAddWordButton" type="button" data-bs-toggle="collapse" data-bs-target="#addWordForm" aria-controls="addWordForm" aria-expanded="false" id="collapseAddWordButton">
                 Додати слово
             </button>
         </div>
@@ -17,7 +21,7 @@
             <input type="hidden" name="_csrf" value="${_csrf.token}">
             <@f.addWord/>
             <label class="col-form label">${message!""}</label>
-            <button type="submit" class="btn btn-outline-success">Додати</button>
+            <button type="submit" class="btn btn-outline-success mt-3">Додати</button>
         </div>
     </form>
 
@@ -30,15 +34,15 @@
 <!--        вставляємо макрос, форму пошуку-->
         <@f.search/>
 
-        <div class="form-group row">
+        <div class="form-group row mb-3">
             <div class="col-2">
-                <button class="btn btn-primary"  name="collapseSortSettingsButton" value="on" type="button" data-toggle="collapse" data-target="#sortSettings" aria-controls="sortSettings" id="collapseSortButton">
+                <button class="btn btn-primary mt-3"  name="collapseSortSettingsButton" value="on" type="button" data-bs-toggle="collapse" data-bs-target="#sortSettings" aria-controls="sortSettings" id="collapseSortButton">
                     Сортування
                 </button>
             </div>
         </div>
         <div id="sortSettings">
-            <div class="form-group row" >
+            <div class="form-group row mb-2" >
 
                 <label class="col-sm-1 col-form-label">Критерій</label>
                 <div class="col-4">

@@ -3,7 +3,7 @@
 <#import "login.ftl" as l>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid d-flex flex-grow-1">
+    <div class="container-fluid d-flex flex-grow-1 mt-2 mb-2">
         <a class="navbar-brand" href="/">Catcher</a>
         <!--        кнопка згортання розгортання при відображенні меню на малих екранах-->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,7 +25,7 @@
             </li>
             </ul>
 
-            <a class="navbar-text me-2" href="${refProfile}" style="color: white;">${name}</a>
+            <a class="navbar-text me-3" href="${refProfile}" style="color: white;">${name}</a>
 
             <#if exists>
             <div class="me-2"><@l.logout /></div>

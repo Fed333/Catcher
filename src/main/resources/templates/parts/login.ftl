@@ -1,14 +1,14 @@
 <#macro login>
 <form action="/login" method="post">
     <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-    <div class="form-group row">
+    <div class="form-group row mb-3">
         <label class="col-sm-2 col-form-label">Login:</label>
         <div class="col-sm-5">
             <input type="text" name="username" class="form-control" placeholder="login"/>
         </div>
 
     </div>
-    <div class="form-group row">
+    <div class="form-group row mb-3">
         <label class="col-sm-2 col-form-label">Password:</label>
         <div class ="col-sm-5">
             <input type="password" name="password" class="form-control" placeholder="password" />
