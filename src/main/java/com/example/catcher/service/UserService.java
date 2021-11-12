@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -161,5 +162,17 @@ public class UserService implements UserDetailsService {
 
     public User findById(Long id) {
         return userRepo.findById(id).get();
+    }
+
+    public List<Word> getLearnedWords(User user, int number) {
+        Random rnd = new Random(System.nanoTime());
+        List<Word> learnedWords = user.getWords();
+        List<Word> wordToLearn = new LinkedList<>();
+        while(number > 0){
+            int index = rnd.nextInt(learnedWords.size());
+            wordToLearn.add(learnedWords.remove(index));
+            --number;
+        }
+        return wordToLearn;
     }
 }

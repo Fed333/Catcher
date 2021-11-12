@@ -185,4 +185,10 @@ public class User implements UserDetails {
     public List<ProgressWord> getVocabulary() {
         return vocabulary;
     }
+
+    public List<Word> getWords() {
+        List<Word> words = new LinkedList<>();
+        vocabulary.forEach(pw->words.add(pw.getWord()));
+        return words;
+    }
 }

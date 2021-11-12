@@ -31,11 +31,7 @@
                 <label>Email: ${user.email!"-"}</label>
             </li>
             <li class="list-group-item">
-                <#if user.birthday??>
-                <label>Дата народження: ${user.birthday?date}</label>
-                <#else>
-                <label>Дата народження: -</label>
-                </#if>
+                <label>Телефон: ${user.phone!"-"}</label>
             </li>
         </ul>
 
@@ -46,10 +42,17 @@
                 <label>Ім'я: ${user.name!"-"}</label>
             </li>
             <li class="list-group-item">
-                <label>Телефон: ${user.phone!"-"}</label>
+                <#if user.birthday??>
+                <label>Дата народження: ${user.birthday?date}</label>
+                <#else>
+                <label>Дата народження: -</label>
+            </#if>
             </li>
             <li class="list-group-item">
                 <label>Рівень володіння: ${user.level?string}</label>
+            </li>
+            <li class="list-group-item">
+                <label>Набрані очки: 0</label>
             </li>
         </ul>
     </div>
@@ -99,10 +102,7 @@
                     <input type="text" name="phone" class="form-control" placeholder="New phone" value="${user.phone!""}">
                 </div>
 
-                <label class="col-sm-2 col-form-label d-flex justify-content-center">Дата народження:</label>
-                <div class="col-3 ml-0">
-                    <input type="date" name="birthday" class="form-control" placeholder="New birthday" value="${user.getBirthdayString()!""}">
-                </div>
+
             </div>
             <button type="submit" class="btn btn-outline-success">Apply</button>
         </form>

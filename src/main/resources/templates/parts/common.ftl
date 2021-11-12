@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="/static/css/styleWordEdit.css">
     <link rel="stylesheet" href="/static/css/table_align-center-middle.css">
     <link rel="stylesheet" href="/static/css/disabledLink.css">
+    <link rel="stylesheet" href="/static/css/offcanvas_style.css">
 </head>
 <body>
 <#include "navbar.ftl"/>
