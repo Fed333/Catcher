@@ -102,6 +102,10 @@
                     <input type="text" name="phone" class="form-control" placeholder="New phone" value="${user.phone!""}">
                 </div>
 
+                <label class="col-sm-2 col-form-label d-flex justify-content-center">Дата народження:</label>
+                <div class="col-3 ml-0">
+                    <input type="date" name="birthday" class="form-control" placeholder="New birthday" value="${user.getBirthdayString()!""}">
+                </div>
 
             </div>
             <button type="submit" class="btn btn-outline-success">Apply</button>
