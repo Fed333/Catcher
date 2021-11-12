@@ -10,12 +10,13 @@ function arrangeCard(id){
 //    client - для розмірів зображення в браузері
     let width = image.naturalWidth;
     let height = image.naturalHeight;
-    if (height > width){
-
-        cardContent.setAttribute("class", "row");
-        divImage.setAttribute("class", "col-md-5");
-        image.setAttribute("class", "img-fluid");
-        divContent.setAttribute("class", "col-md-7");
+    console.log("id:" + id + ", width:"+width + ", height:" + height);
+    if (height >= width){
+        //horizontal
+        cardContent.setAttribute("class", "row g-0");
+        divImage.setAttribute("class", "col-md-4");
+        image.setAttribute("class", "img-fluid rounded-start");
+        divContent.setAttribute("class", "col-md-8");
     }
     else{
             cardContent.setAttribute("class", "");

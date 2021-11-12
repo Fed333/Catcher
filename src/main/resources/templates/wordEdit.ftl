@@ -48,7 +48,7 @@
             </div>
 
         </div>
-        <button type="submit" class="btn btn-outline-success">Змінити</button>
+        <button type="submit" class="btn btn-outline-success mt-3">Змінити</button>
 
 </form>
 </div>
