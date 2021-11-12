@@ -21,10 +21,10 @@
 <!--For Masonry-->
     <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
 
-    <link rel="stylesheet" href="/static/styleBackground.css">
-    <link rel="stylesheet" href="/static/styleWordEdit.css">
-    <link rel="stylesheet" href="/static/table_align-center-middle.css">
-    <link rel="stylesheet" href="/static/disabledLink.css">
+    <link rel="stylesheet" href="/static/css/styleBackground.css">
+    <link rel="stylesheet" href="/static/css/styleWordEdit.css">
+    <link rel="stylesheet" href="/static/css/table_align-center-middle.css">
+    <link rel="stylesheet" href="/static/css/disabledLink.css">
 </head>
 <body>
 <#include "navbar.ftl"/>

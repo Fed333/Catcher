@@ -1,5 +1,6 @@
 <#import "parts/common.ftl" as c>
 <#include "parts/references.ftl">
+<#import "parts/offcanvas.ftl" as o>
 
 <@c.page "Profile">
 
@@ -8,10 +9,9 @@
         <h1>Профіль</h1>
     </div>
     <div class="col-1">
-        <a href="#sidebar" class="d-block" data-bs-toggle="offcanvas"
-        role="button" aria-controls="sidebar">
-            Меню
-        </a>
+
+    <@o.offcanvas/>
+
     </div>
 </div>
 <div class="row mt-3">
@@ -135,10 +135,6 @@
     <a class="nav-link" href="${refUserVoc}">Мої слова</a>
 </nav>
 
-<!--offcanvas-->
-<div class="offcanvas offcanvas offcanvas-start" tabindex="-1" id="sidebar"
-     aria-labelledby="sidebar-label">
-        Something
-</div>
+
 
 </@c.page>

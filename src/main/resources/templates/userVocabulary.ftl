@@ -26,7 +26,7 @@
         <a class="nav-link" aria-current="page" href="${refUserVoc}&view=statistic" id="statisticLinkId">Statistic</a>
     </li>
 <!--    вибере активне посилання-->
-    <script src="/static/setView.js"></script>
+    <script src="/static/js/setView.js"></script>
 </ul>
 
 <#if view??>
@@ -60,7 +60,7 @@
     </table>
     <#elseif view = "cards">
 
-        <script src="static/arrangeCardsVocabulary.js"></script>
+        <script src="static/js/arrangeCardsVocabulary.js"></script>
         <div class="row" data-masonry='{"percentPosition": true }'>
 
             <#list vocabulary as pw>
