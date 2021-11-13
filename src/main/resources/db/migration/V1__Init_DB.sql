@@ -11,6 +11,10 @@ CREATE SEQUENCE public.progress_word_id_seq
     START WITH 1
     INCREMENT BY 1;
 
+CREATE SEQUENCE public.completed_tests_id_seq
+    START WITH 1
+    INCREMENT BY 1;
+
 CREATE TABLE public.dictionary (
     id BIGINT NOT NULL DEFAULT nextval('public.dictionary_id_seq'::regclass),
     translation VARCHAR(128) NOT NULL,
@@ -34,7 +38,7 @@ CREATE TABLE public.progress_word (
 );
 
 create table user_role (
-    user_id INT8 NOT NULL,
+    user_id BIGINT NOT NULL,
     roles VARCHAR(8)
 );
 
@@ -52,6 +56,23 @@ CREATE TABLE public.users (
     PRIMARY KEY (id)
 );
 
+CREATE TABLE public.completed_tests (
+    id BIGINT DEFAULT nextval('public.completed_tests_id_seq'::regclass),
+    user_id INTEGER NOT NULL,
+    taking_time TIMESTAMP WITHOUT TIME ZONE,
+    score INTEGER,
+    PRIMARY KEY(id)
+);
+
+CREATE TABLE public.test_questions(
+    test_id INTEGER NOT NULL,
+    question VARCHAR(128) NOT NULL,
+    answer VARCHAR(128) NOT NULL,
+    points INTEGER
+);
+
 ALTER TABLE IF EXISTS progress_word ADD CONSTRAINT FK_Progress_Word_Users FOREIGN KEY (user_id) REFERENCES users;
 ALTER TABLE IF EXISTS progress_word ADD CONSTRAINT FK_Progress_Word_Dictionary FOREIGN KEY (word_id) REFERENCES dictionary;
 ALTER TABLE IF EXISTS user_role ADD CONSTRAINT FK_User_Role_Users FOREIGN KEY (user_id) REFERENCES users;
+ALTER TABLE IF EXISTS completed_tests ADD CONSTRAINT FK_Completed_Tests_Users FOREIGN KEY (user_id) REFERENCES users;
+ALTER TABLE IF EXISTS test_questions ADD CONSTRAINT FK_Test_Questions_Completed_Tests FOREIGN KEY (test_id) REFERENCES completed_tests;
