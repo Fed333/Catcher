@@ -52,6 +52,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Level level;
 
+    @Column(name = "score")
+    private Integer score;
+
     @Column(name="date_of_birth")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
@@ -186,9 +189,21 @@ public class User implements UserDetails {
         return vocabulary;
     }
 
+
     public List<Word> getWords() {
         List<Word> words = new LinkedList<>();
-        vocabulary.forEach(pw->words.add(pw.getWord()));
+        vocabulary.forEach(pw -> words.add(pw.getWord()));
         return words;
+    }
+    public void setVocabulary(List<ProgressWord> vocabulary) {
+        this.vocabulary = vocabulary;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
     }
 }
