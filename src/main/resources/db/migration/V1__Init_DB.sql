@@ -58,14 +58,14 @@ CREATE TABLE public.users (
 
 CREATE TABLE public.completed_tests (
     id BIGINT DEFAULT nextval('public.completed_tests_id_seq'::regclass),
-    user_id INTEGER NOT NULL,
+    user_id BIGINT NOT NULL,
     taking_time TIMESTAMP WITHOUT TIME ZONE,
     score INTEGER,
     PRIMARY KEY(id)
 );
 
 CREATE TABLE public.test_questions(
-    test_id INTEGER NOT NULL,
+    test_id BIGINT NOT NULL,
     question VARCHAR(128) NOT NULL,
     answer VARCHAR(128) NOT NULL,
     points INTEGER
