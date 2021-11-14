@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface UserRepo extends JpaRepository<User, Long> {
-    User findByLogin(String login);
 
+    @Override
     List<User> findAll();
+
+    User findByLogin(String login);
     List<User> findAllByName(String name);
     List<User> findAllByLogin(String login);
 }

@@ -36,8 +36,13 @@ public class User implements UserDetails {
     //реляційне відношення один до багатьох
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name="user_id")
-    //хібернейт підгрузить в цю колекцію, весь словниковий запас користувача
-    private List<ProgressWord> vocabulary = new LinkedList<>();
+    private List<ProgressWord> vocabulary;
+
+//    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy="user", fetch=FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
+//    @JoinColumn(name="user_id")
+    private List<CompletedTest> completedTests;
 
     @Column(name="name")
     private String name;
@@ -199,5 +204,13 @@ public class User implements UserDetails {
 
     public void setScore(Integer score) {
         this.score = score;
+    }
+
+    public List<CompletedTest> getCompletedTests() {
+        return completedTests;
+    }
+
+    public void setCompletedTests(List<CompletedTest> completedTests) {
+        this.completedTests = completedTests;
     }
 }

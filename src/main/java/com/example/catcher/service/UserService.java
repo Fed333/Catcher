@@ -4,12 +4,15 @@ import com.example.catcher.algorithms.SortOrder;
 import com.example.catcher.domain.*;
 import com.example.catcher.repos.ProgressWordRepo;
 import com.example.catcher.repos.UserRepo;
+import org.hibernate.Hibernate;
+import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -86,7 +89,7 @@ public class UserService implements UserDetailsService {
     public void save(User user) {
         userRepo.save(user);
     }
-
+//    @Transactional
     public List<ProgressWord> search(User user, String languageFilter, String wordFilter, String a1, String a2, String b1, String b2) {
         List<ProgressWord> vocabulary = new LinkedList<>();
         Set<Level> levelsFilter = new HashSet<>();
@@ -116,7 +119,8 @@ public class UserService implements UserDetailsService {
             }
         }
         else{
-            Iterable<ProgressWord> all = user.getVocabulary();
+            Iterable<ProgressWord> all = this.getVocabulary(user);
+//            Iterable<ProgressWord> all = progressWordRepo.findByUserId(user.getId());
             for(ProgressWord pw: all){
                 if (levelsFilter.contains(pw.getWord().getLevel())){
                     vocabulary.add(pw);
@@ -130,7 +134,7 @@ public class UserService implements UserDetailsService {
 
         LinkedList<ProgressWord> found = new LinkedList<>();
         Pattern pattern = Pattern.compile(filter, Pattern.CASE_INSENSITIVE);
-        Iterable<ProgressWord> vocabulary = user.getVocabulary();
+        Iterable<ProgressWord> vocabulary = this.getVocabulary(user);
         for(ProgressWord pw: vocabulary){
             Matcher matcher = pattern.matcher(criterion.byCriterion(pw.getWord()));
             if (levelsFilter.contains(pw.getWord().getLevel()) && matcher.find()){
@@ -142,7 +146,7 @@ public class UserService implements UserDetailsService {
 
     public boolean learnWord(User user, Word word) {
         List<Long> words = new LinkedList<>();
-        List<ProgressWord> vocabulary = user.getVocabulary();
+        List<ProgressWord> vocabulary = this.getVocabulary(user);
         vocabulary.forEach(pw -> {
             words.add(pw.getWord().getId());
         });
@@ -152,7 +156,7 @@ public class UserService implements UserDetailsService {
             ProgressWord pw = new ProgressWord(user, word, new Date());
             //обов'язково зберігати цей об'єкт в бд. Інакше під час сеансу userRepo.save буде штампувати нові
             progressWordRepo.save(pw);
-            user.getVocabulary().add(pw);
+            vocabulary.add(pw);
             userRepo.save(user);
 
         }
@@ -161,5 +165,22 @@ public class UserService implements UserDetailsService {
 
     public User findById(Long id) {
         return userRepo.findById(id).get();
+    }
+
+//    @Transactional(readOnly = true)
+    public List<ProgressWord> getVocabulary(User user) {
+        List<ProgressWord> voc;
+        try{
+            voc = user.getVocabulary();
+            if (!Hibernate.isInitialized(voc)){
+                Hibernate.initialize(voc);
+            }
+        }
+        catch(LazyInitializationException e){
+            User userFetched = userRepo.getById(user.getId());
+            voc = userFetched.getVocabulary();
+        }
+
+       return voc;
     }
 }
