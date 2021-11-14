@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -167,20 +168,32 @@ public class UserService implements UserDetailsService {
         return userRepo.findById(id).get();
     }
 
+
 //    @Transactional(readOnly = true)
     public List<ProgressWord> getVocabulary(User user) {
         List<ProgressWord> voc;
-        try{
+        try {
             voc = user.getVocabulary();
-            if (!Hibernate.isInitialized(voc)){
+            if (!Hibernate.isInitialized(voc)) {
                 Hibernate.initialize(voc);
             }
-        }
-        catch(LazyInitializationException e){
+        } catch (LazyInitializationException e) {
             User userFetched = userRepo.getById(user.getId());
             voc = userFetched.getVocabulary();
         }
 
-       return voc;
+        return voc;
+    }
+    
+    public List<Word> getLearnedWords(User user, int number) {
+        Random rnd = new Random(System.nanoTime());
+        List<Word> learnedWords = user.getWords();
+        List<Word> wordToLearn = new LinkedList<>();
+        while(number > 0){
+            int index = rnd.nextInt(learnedWords.size());
+            wordToLearn.add(learnedWords.remove(index));
+            --number;
+        }
+        return wordToLearn;
     }
 }

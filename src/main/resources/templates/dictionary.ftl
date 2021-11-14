@@ -3,11 +3,15 @@
 <#include "parts/security.ftl">
 <@c.page "Dictionary">
 
+<div class="col d-flex justify-content-center">
+    <h2>Словник</h2>
+</div>
+
 <div class="form-group">
     <#if isTeacher>
     <div class="form-group row">
         <div class="col-2">
-            <button class="btn btn-primary" name="collapseAddWordButton" type="button" data-toggle="collapse" data-target="#addWordForm" aria-controls="addWordForm" aria-expanded="false" id="collapseAddWordButton">
+            <button class="btn btn-primary" name="collapseAddWordButton" type="button" data-bs-toggle="collapse" data-bs-target="#addWordForm" aria-controls="addWordForm" aria-expanded="false" id="collapseAddWordButton">
                 Додати слово
             </button>
         </div>
@@ -17,7 +21,7 @@
             <input type="hidden" name="_csrf" value="${_csrf.token}">
             <@f.addWord/>
             <label class="col-form label">${message!""}</label>
-            <button type="submit" class="btn btn-outline-success">Додати</button>
+            <button type="submit" class="btn btn-outline-success mt-3">Додати</button>
         </div>
     </form>
 
@@ -25,24 +29,24 @@
     <form action="/dictionary" method="get" id="editViewForm">
         <input type="hidden" name="data" id="data_id" value="${data_id!"[]"}">
         <input type="hidden" name="displayAddForm" id="showAddFormFlag" value="${showAddForm!"false"}">
-        <script src="/static/displayAddWordCollapse.js"></script>
+        <script src="/static/js/displayAddWordCollapse.js"></script>
 
 <!--        вставляємо макрос, форму пошуку-->
         <@f.search/>
 
-        <div class="form-group row">
+        <div class="form-group row mb-3">
             <div class="col-2">
-                <button class="btn btn-primary"  name="collapseSortSettingsButton" value="on" type="button" data-toggle="collapse" data-target="#sortSettings" aria-controls="sortSettings" id="collapseSortButton">
+                <button class="btn btn-primary mt-3"  name="collapseSortSettingsButton" value="on" type="button" data-bs-toggle="collapse" data-bs-target="#sortSettings" aria-controls="sortSettings" id="collapseSortButton">
                     Сортування
                 </button>
             </div>
         </div>
         <div id="sortSettings">
-            <div class="form-group row" >
+            <div class="form-group row mb-2" >
 
                 <label class="col-sm-1 col-form-label">Критерій</label>
                 <div class="col-4">
-                    <select class="form-control" name="sortCriterion" id="sortCriterionSelect">
+                    <select class="form-select" name="sortCriterion" id="sortCriterionSelect">
                         <option value="None" id="noneOption">Відсутній</option>
                         <option value="Word" id="wordOption">Слово</option>
                         <option value="Translation" id="translationOption">Переклад</option>
@@ -56,12 +60,12 @@
                     <#elseif sortCriterion=="Level">
                         <script>levelOption.setAttribute('selected', 'selected')</script>
                     </#if>
-                <script src="/static/sortButtonAction.js"></script>
-                <script src="/static/sortSelectAction.js"></script>
+                <script src="/static/js/sortButtonAction.js"></script>
+                <script src="/static/js/sortSelectAction.js"></script>
                 </div>
                 <label class=" col-sm-1 col-form-label">Порядок</label>
                 <div class="col-4">
-                    <select class="form-control" name="sortOrder" id="sortOrderSelect" onchange="document.getElementById('editViewForm').submit()">
+                    <select class="form-select" name="sortOrder" id="sortOrderSelect" onchange="document.getElementById('editViewForm').submit()">
                         <option value="asc" id="ascOption" >По зростанню</option>
                         <option value="desc" id="descOption">По спаданню</option>
                     </select>
@@ -122,5 +126,5 @@
     </tbody>
 
 </table>
-<script src="disableLearnedWords.js"></script>
+<script src="/static/js/disableLearnedWords.js"></script>
 </@c.page>

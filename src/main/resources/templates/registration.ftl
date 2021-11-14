@@ -5,7 +5,7 @@
 <div>
     <form action="/registration" method="post">
 
-        <div class="form-group row">
+        <div class="form-group row mb-3">
             <label class="col-sm-2 col-form-label">Login: </label>
             <div class="col-sm-4">
                 <input type="text" name="login" class="form-control" placeholder="login"/>
@@ -16,7 +16,7 @@
             </div>
         </div>
 
-        <div class="form-group row">
+        <div class="form-group row mb-3">
             <label class="col-sm-2 col-form-label">Name:</label>
             <div class ="col-sm-4">
                 <input type="text" name="name" class="form-control" placeholder="name" />
@@ -27,7 +27,7 @@
             </div>
 
         </div>
-        <div class="form-group row">
+        <div class="form-group row mb-3">
             <label class="col-sm-2 col-form-label">Birth Date:</label>
             <div class="col-sm-4">
                 <input type="date" name="birthday" class="form-control">
@@ -38,7 +38,7 @@
             </div>
         </div>
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <button type="submit" class="btn btn-primary">Зареєструватися</button>
+        <button type="submit" class="btn btn-primary mt-3">Зареєструватися</button>
     </form>
 </div>
 </@c.page>

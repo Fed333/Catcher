@@ -26,7 +26,7 @@
         <a class="nav-link" aria-current="page" href="${refUserVoc}&view=statistic" id="statisticLinkId">Statistic</a>
     </li>
 <!--    вибере активне посилання-->
-    <script src="/static/setView.js"></script>
+    <script src="/static/js/setView.js"></script>
 </ul>
 
 <#if view??>
@@ -59,32 +59,35 @@
             </tbody>
     </table>
     <#elseif view = "cards">
-        <div class="card-columns">
-            <script src="static/arrangeCardsVocabulary.js"></script>
-            <#list vocabulary as pw>
-                <div class="card mt-3" style="max-width: 540px;">
-                    <div style="margin:0 auto;" id="cardContent${pw.word.id}Id">
-                        <div id="divImage${pw.word.id}Id">
-                            <#if pw.word.imgName??>
-                                <img src="/word_img/${pw.word.imgName}" alt="word image" id="image${pw.word.id}Id">
-                            </#if>
 
-                        </div>
-                    <div id="divContent${pw.word.id}Id">
-                        <div class="card-body">
-                            <div>
-                                <h5>${pw.word.word}</h5>
-                                <h6>${pw.word.translation}</h6>
-                                <p class="card-text">Рівень: ${pw.word.level}</p>
-                                <p class="card-text">Дата вивчення: ${pw.learnedDate?date}</p>
-                                <p class="card-text"><small class="text-muted">Останнє повторення: ${pw.lastRevisionDate!pw.learnedDate?date}</small></p>
+        <script src="static/js/arrangeCardsVocabulary.js"></script>
+        <div class="row" data-masonry='{"percentPosition": true }'>
+
+            <#list vocabulary as pw>
+                <div class="col-4">
+                    <div class="card mt-3">
+                            <div id="cardContent${pw.word.id}Id">
+                                <#if pw.word.imgName??>
+                                <div id="divImage${pw.word.id}Id">
+                                    <img class="card-img-top" src="/word_img/${pw.word.imgName}" alt="word image" id="image${pw.word.id}Id">
+                                </div>
+                                </#if>
+
+                                <div id="divContent${pw.word.id}Id">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${pw.word.word}</h5>
+                                        <h6>${pw.word.translation}</h6>
+                                        <p class="card-text">Рівень: ${pw.word.level}</p>
+                                        <p class="card-text">Дата вивчення: ${pw.learnedDate?date}</p>
+                                        <p class="card-text"><small class="text-muted">Останнє повторення: ${pw.lastRevisionDate!pw.learnedDate?date}</small></p>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
                     </div>
-                </div>
                 <#if pw.word.imgName??>
                     <script>arrangeCard(${pw.word.id});</script>
                 </#if>
+
             </div>
             </#list>
         </div>

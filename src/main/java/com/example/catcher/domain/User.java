@@ -194,6 +194,12 @@ public class User implements UserDetails {
         return vocabulary;
     }
 
+
+    public List<Word> getWords() {
+        List<Word> words = new LinkedList<>();
+        vocabulary.forEach(pw -> words.add(pw.getWord()));
+        return words;
+    }
     public void setVocabulary(List<ProgressWord> vocabulary) {
         this.vocabulary = vocabulary;
     }
