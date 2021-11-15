@@ -52,7 +52,7 @@
                 <label>Рівень володіння: ${user.level?string}</label>
             </li>
             <li class="list-group-item">
-                <label>Набрані очки: 0</label>
+                <label>Набрані очки: ${user.score}</label>
             </li>
         </ul>
     </div>

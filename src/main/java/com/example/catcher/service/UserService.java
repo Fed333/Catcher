@@ -40,6 +40,9 @@ public class UserService implements UserDetailsService {
         return userRepo.findByLogin(s);
     }
 
+    public User findUserById(Long id){
+        return userRepo.findById(id).get();
+    }
 
 
     public void updateProfile(User user, String login, String name, String email, String phone, String birthday, MultipartFile file) throws IOException {
@@ -184,7 +187,7 @@ public class UserService implements UserDetailsService {
 
         return voc;
     }
-    
+
     public List<Word> getLearnedWords(User user, int number) {
         Random rnd = new Random(System.nanoTime());
         List<Word> learnedWords = user.getWords();
