@@ -39,7 +39,7 @@
         <button class="btn btn-outline-success mt-4">Надіслати</button>
 </#if>
 </form>
-<script src="/static/js/sendFormTest.js"></script>
-<button class="btn btn-outline-success mt-4" onclick="sendFormTest()">Test JSON</button>
+<!--<script src="/static/js/sendFormTest.js"></script>-->
+<!--<button class="btn btn-outline-success mt-4" onclick="sendFormTest()">Test JSON</button>-->
 
 </@c.page>

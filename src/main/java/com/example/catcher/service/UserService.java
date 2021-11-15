@@ -1,7 +1,9 @@
 package com.example.catcher.service;
 
 import com.example.catcher.algorithms.SortOrder;
+import com.example.catcher.algorithms.Sorts;
 import com.example.catcher.domain.*;
+import com.example.catcher.dto.Task1QuestionsRequest;
 import com.example.catcher.repos.ProgressWordRepo;
 import com.example.catcher.repos.UserRepo;
 import org.hibernate.Hibernate;
@@ -198,5 +200,20 @@ public class UserService implements UserDetailsService {
             --number;
         }
         return wordToLearn;
+    }
+//    @Transactional
+//    завдання 1 - переклад українських слів на англійску
+    public void checkTask1(User user, Task1QuestionsRequest task1) {
+        List<ProgressWord> vocabulary = getVocabulary(user);
+
+        List<Word> words = new ArrayList<>(vocabulary.size()); //одразу резервуємо пам'ять
+
+        Iterator<ProgressWord> it = vocabulary.iterator();
+        while(it.hasNext()){
+            ProgressWord pw = it.next();
+            words.add(pw.getWord());
+        }
+        words = Sorts.qSort(words, new Word.TranslationComparator());
+
     }
 }

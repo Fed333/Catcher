@@ -1,6 +1,7 @@
 package com.example.catcher.domain;
 
 import javax.persistence.*;
+import java.util.Comparator;
 import java.util.Objects;
 
 @Entity
@@ -67,6 +68,20 @@ public class Word implements Comparable<Word> {
         this.imgName = imgName;
     }
 
+    public static class TranslationComparator implements Comparator<Word> {
+        @Override
+        public int compare(Word o1, Word o2) {
+            return o1.getTranslation().compareTo(o2.getTranslation());
+        }
+    }
+
+    public static class WordComparator implements Comparator<Word> {
+        @Override
+        public int compare(Word o1, Word o2) {
+            return o1.getWord().compareTo(o2.getWord());
+        }
+    }
+
     @Override
     public int compareTo(Word o) {
         return word.compareTo(o.getWord());
@@ -86,6 +101,12 @@ public class Word implements Comparable<Word> {
     @Override
     public int hashCode() {
         return Objects.hash(id, word, translation, level);
+    }
+
+
+    @Override
+    public String toString() {
+        return String.format("%20s, %20s, %3s", word, translation, level);
     }
 }
 

@@ -56,7 +56,7 @@ public class TestController {
             Model model
     )
     {
-
+        userService.checkTask1(user, task1);
         model.addAttribute("user", user);
         return "redirect:/profile";
     }
