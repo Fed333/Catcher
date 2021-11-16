@@ -1,5 +1,6 @@
 package com.example.catcher.algorithms;
 
+import com.example.catcher.domain.ProgressWord;
 import com.example.catcher.domain.Word;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public class BinarySearch {
         return binarySearch(array, target, T::compareTo);
     }
 
-    public static <T extends Comparable<T>>Integer binarySearch(ArrayList<T> array, T target, Comparator<T> cmp){
+    public static <T>Integer binarySearch(ArrayList<T> array, T target, Comparator<T> cmp){
 
         int low = 0, height = array.size() - 1;
         int middle;
@@ -33,6 +34,5 @@ public class BinarySearch {
         }
         return index;
     }
-
 
 }

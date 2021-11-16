@@ -217,17 +217,14 @@ public class UserService implements UserDetailsService {
 //    @Transactional
 //    завдання 1 - переклад українських слів на англійску
     public void checkTask1(User user, Task1QuestionsRequest task1) {
-        List<ProgressWord> vocabulary = getVocabulary(user);
+    //    test(user);
+        List<ProgressWord> vocabulary = new ArrayList<>();
 
-        List<Word> words = new ArrayList<>(vocabulary.size()); //одразу резервуємо пам'ять
+        vocabulary.addAll(getVocabulary(user));
 
-        Iterator<ProgressWord> pwIt = vocabulary.iterator();
-        while(pwIt.hasNext()){
-            ProgressWord pw = pwIt.next();
-            words.add(pw.getWord());
-        }
+        Comparator<ProgressWord> comparatorTranslation = Comparator.comparing(o -> o.getWord().getTranslation());
 
-        words = Sorts.qSort(words, new Word.TranslationComparator());
+        vocabulary = Sorts.qSort(vocabulary, comparatorTranslation);
         List<TestQuestion> response = task1.getTask1(); //масив із запитаннями та відповідями
 
         int totalScore = 0;  //рахунок
@@ -235,16 +232,23 @@ public class UserService implements UserDetailsService {
         Iterator<TestQuestion> rIt = response.iterator();
         while(rIt.hasNext()){ //tq.getQuestion() - питання українські слова, tq.getAnswer() - відповіді англійські
             TestQuestion tq = rIt.next();
-            int index = BinarySearch.binarySearch((ArrayList<Word>) words, new Word(tq.getAnswer(), tq.getQuestion()), new Word.TranslationComparator());
+            int index = BinarySearch.binarySearch((ArrayList<ProgressWord>) vocabulary, new ProgressWord(user, new Word(tq.getAnswer(), tq.getQuestion())), comparatorTranslation);
             if (index < 0){
                 System.out.println("слова з перекладом " + tq.getQuestion() + " серед списку вивчених слів " + user.getLogin() + " не виявлено");
                 rIt.remove();
+                continue;
             }
-            String answer = words.get(index).getWord(); //відповідь тут англійське слово
-            if (answer.toLowerCase().equals(tq.getAnswer().toLowerCase())){
+            ProgressWord progress = vocabulary.get(index);
+            progress.setRevisionCount(progress.getRevisionCount()+1);   //додали одне повторення
+            progress.setLastRevisionDate(new Date());               //оновили дату останнього повторення
+            String answer = progress.getWord().getWord();           //відповідь тут англійське слово
+            if (answer.toLowerCase().equals(tq.getAnswer().toLowerCase())){     //відповідь зараховано
                 tq.setPoints(TestQuestion.maxPoints);
                 totalScore += tq.getPoints();
+                progress.setGuessingCount(progress.getGuessingCount()+1);
+
             }
+            progressWordRepo.save(progress);
             tq.setTest(test);
         }
 
@@ -262,5 +266,20 @@ public class UserService implements UserDetailsService {
 
         user.getCompletedTests().add(test);
         userRepo.save(user);
+    }
+
+    private void test(User u){
+        List<ProgressWord> vocabulary = new ArrayList<>();
+        vocabulary.addAll(this.getVocabulary(u));
+
+        Comparator<ProgressWord> comparatorTranslation = Comparator.comparing(o -> o.getWord().getTranslation());
+        System.out.println("До сортування");
+        vocabulary.forEach(System.out::println);
+
+        vocabulary = Sorts.qSort(vocabulary, comparatorTranslation);
+        System.out.println("Після сортування");
+        vocabulary.forEach(System.out::println);
+
+
     }
 }

@@ -28,7 +28,7 @@ public class ProgressWord {
     @Column(name="last_revision_date")
     private Date lastRevisionDate;
 
-    //загальна кількість повторенб
+    //загальна кількість повторень
     @Column(name="revision_count")
     private Integer revisionCount;
 
@@ -40,11 +40,15 @@ public class ProgressWord {
     @Column(name="studied")
     private Boolean studied;
 
-    private ProgressWord() {
+    public ProgressWord() {
         revisionCount = 0;
         guessingCount = 0;
         learnedDate = new Date();
         studied = false;
+    }
+
+    public ProgressWord(User user, Word word) {
+        this(user, word, new Date());
     }
 
     public ProgressWord(User user, Word word, Date learnedDate) {
