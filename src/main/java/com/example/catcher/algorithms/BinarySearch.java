@@ -1,5 +1,7 @@
 package com.example.catcher.algorithms;
 
+import com.example.catcher.domain.Word;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -18,7 +20,7 @@ public class BinarySearch {
         while(low <= height){
             middle = (height + low)/2;
             T el = array.get(middle);
-            if (target.equals(el)){
+            if (cmp.compare(target, el) == 0){
                 index = middle;
                 break;
             }
@@ -31,4 +33,6 @@ public class BinarySearch {
         }
         return index;
     }
+
+
 }

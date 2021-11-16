@@ -24,6 +24,14 @@ public class Word implements Comparable<Word> {
     @Column(name="img_name")
     private String imgName;
 
+    public Word() {
+    }
+
+    public Word(String word, String translation) {
+        this.word = word;
+        this.translation = translation;
+    }
+
     public enum Criterion{
        WORD, TRANSLATION, LEVEL
     }

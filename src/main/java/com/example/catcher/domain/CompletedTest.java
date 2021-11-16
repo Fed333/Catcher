@@ -42,6 +42,7 @@ public class CompletedTest {
     public CompletedTest(User user, Integer score) {
         this();
         this.user = user;
+        this.userId = user.getId();
         this.score = score;
     }
 

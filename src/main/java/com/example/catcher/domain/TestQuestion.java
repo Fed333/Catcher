@@ -22,6 +22,8 @@ public class TestQuestion {
     @Column(name = "points")
     private Integer points;
 
+    public static final Integer maxPoints = 5; //максимум балів за одне питання
+
     public TestQuestion() {
         points = 0;
     }

@@ -43,15 +43,9 @@ public class TestController {
     }
 
     @PostMapping
-    @Transactional(readOnly = true)
     public String checkTest(
-
-//            String[] question,
-//            String[] answer,
-//            @RequestBody(required = false) TestQuestionsRequest question,
             Task1QuestionsRequest task1,
             Task2QuestionsRequest task2,
-
             @AuthenticationPrincipal User user,
             Model model
     )

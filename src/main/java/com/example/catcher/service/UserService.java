@@ -1,11 +1,15 @@
 package com.example.catcher.service;
 
+import com.example.catcher.algorithms.BinarySearch;
 import com.example.catcher.algorithms.SortOrder;
 import com.example.catcher.algorithms.Sorts;
 import com.example.catcher.domain.*;
 import com.example.catcher.dto.Task1QuestionsRequest;
+import com.example.catcher.repos.CompletedTestRepo;
 import com.example.catcher.repos.ProgressWordRepo;
+import com.example.catcher.repos.TestQuestionRepo;
 import com.example.catcher.repos.UserRepo;
+import org.aspectj.weaver.ast.Test;
 import org.hibernate.Hibernate;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +38,17 @@ public class UserService implements UserDetailsService {
     @Autowired
     private ProgressWordRepo progressWordRepo;
 
+    @Autowired
+    private CompletedTestRepo completedTestRepo;
+
+    @Autowired
+    private TestQuestionRepo testQuestionRepo;
+
     @Value("${upload.path}")
     private String uploadPath;
+
+    public UserService() {
+    }
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
@@ -208,12 +221,46 @@ public class UserService implements UserDetailsService {
 
         List<Word> words = new ArrayList<>(vocabulary.size()); //одразу резервуємо пам'ять
 
-        Iterator<ProgressWord> it = vocabulary.iterator();
-        while(it.hasNext()){
-            ProgressWord pw = it.next();
+        Iterator<ProgressWord> pwIt = vocabulary.iterator();
+        while(pwIt.hasNext()){
+            ProgressWord pw = pwIt.next();
             words.add(pw.getWord());
         }
-        words = Sorts.qSort(words, new Word.TranslationComparator());
 
+        words = Sorts.qSort(words, new Word.TranslationComparator());
+        List<TestQuestion> response = task1.getTask1(); //масив із запитаннями та відповідями
+
+        int totalScore = 0;  //рахунок
+        CompletedTest test = new CompletedTest();
+        Iterator<TestQuestion> rIt = response.iterator();
+        while(rIt.hasNext()){ //tq.getQuestion() - питання українські слова, tq.getAnswer() - відповіді англійські
+            TestQuestion tq = rIt.next();
+            int index = BinarySearch.binarySearch((ArrayList<Word>) words, new Word(tq.getAnswer(), tq.getQuestion()), new Word.TranslationComparator());
+            if (index < 0){
+                System.out.println("слова з перекладом " + tq.getQuestion() + " серед списку вивчених слів " + user.getLogin() + " не виявлено");
+                rIt.remove();
+            }
+            String answer = words.get(index).getWord(); //відповідь тут англійське слово
+            if (answer.toLowerCase().equals(tq.getAnswer().toLowerCase())){
+                tq.setPoints(TestQuestion.maxPoints);
+                totalScore += tq.getPoints();
+            }
+            tq.setTest(test);
+        }
+
+        user.setScore(user.getScore()+totalScore);
+
+        test.setUser(user);
+        test.setScore(totalScore);
+        test.setQuestions(response);
+
+        completedTestRepo.save(test);
+
+        test.getQuestions().forEach(q->{
+            testQuestionRepo.save(q);
+        });
+
+        user.getCompletedTests().add(test);
+        userRepo.save(user);
     }
 }
