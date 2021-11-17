@@ -248,12 +248,16 @@ public class UserService implements UserDetailsService {
             String rightAnswer = progress.getWord().getWord().toLowerCase();          //правильна відповідь тут англійське слово
             String studentRespond = tq.getAnswer().toLowerCase();                     //відповідь студента
 
-            rightAnswer = rightAnswer.replaceFirst("(a |an |to )", "");
-            studentRespond = studentRespond.replaceFirst("(a |an |to)", "");
+
+            rightAnswer = rightAnswer.replaceFirst("(^a |^the |^an |^to )", "");
+            studentRespond = studentRespond.replaceFirst("(^a |^the |^an |^to )", "");
+
 
             double similarity;
             try {
                 EditorialDistance distance = new EditorialDistance(rightAnswer, studentRespond);
+                distance.setHashDistances(user.getCache());
+                System.out.print("[user]: " + user.getLogin() + " | ");
                 similarity = distance.similarity();              //вирахувати схожість рядків (число від 0 до 1)
             }
             catch(EditorialDistance.OverwhelmedAmountOfMemoryException oe){
