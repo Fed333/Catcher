@@ -4,6 +4,7 @@ import com.example.catcher.domain.Level;
 import com.example.catcher.domain.ProgressWord;
 import com.example.catcher.domain.User;
 import com.example.catcher.domain.Word;
+import com.example.catcher.service.ProgressWordService;
 import com.example.catcher.service.UserService;
 import com.example.catcher.service.WordService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,6 +29,9 @@ public class DictionaryController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ProgressWordService progressWordService;
 
     @Value("${words.path}")
     private String wordsPath;
@@ -52,12 +52,10 @@ public class DictionaryController {
     ){
 
         List<Word> words = wordService.searchWords(languageFilter, wordFilter, a1, a2, b1, b2, sortCriterion, sortOrder);
-        List<ProgressWord> vocabulary = user.getVocabulary();
 
-        LinkedList<Long> words_id = new LinkedList<>();
-        vocabulary.forEach(pw->{
-            words_id.add(pw.getWord().getId());
-        });
+        List<ProgressWord> vocabulary = userService.getVocabulary(user);
+        LinkedList<Long> words_id = progressWordService.extractWordsId(vocabulary);
+
         String strArr = words_id.toString();
 
         model.addAttribute("words", words);

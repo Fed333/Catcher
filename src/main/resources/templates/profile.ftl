@@ -1,11 +1,17 @@
 <#import "parts/common.ftl" as c>
 <#include "parts/references.ftl">
+<#import "parts/offcanvas.ftl" as o>
 
 <@c.page "Profile">
 
 <div class="row row-centered" >
     <div class="col d-flex justify-content-center">
         <h1>Профіль</h1>
+    </div>
+    <div class="col-1">
+
+    <@o.offcanvas/>
+
     </div>
 </div>
 <div class="row mt-3">
@@ -25,11 +31,7 @@
                 <label>Email: ${user.email!"-"}</label>
             </li>
             <li class="list-group-item">
-                <#if user.birthday??>
-                <label>Дата народження: ${user.birthday?date}</label>
-                <#else>
-                <label>Дата народження: -</label>
-                </#if>
+                <label>Телефон: ${user.phone!"-"}</label>
             </li>
         </ul>
 
@@ -40,10 +42,17 @@
                 <label>Ім'я: ${user.name!"-"}</label>
             </li>
             <li class="list-group-item">
-                <label>Телефон: ${user.phone!"-"}</label>
+                <#if user.birthday??>
+                <label>Дата народження: ${user.birthday?date}</label>
+                <#else>
+                <label>Дата народження: -</label>
+            </#if>
             </li>
             <li class="list-group-item">
                 <label>Рівень володіння: ${user.level?string}</label>
+            </li>
+            <li class="list-group-item">
+                <label>Набрані очки: ${user.score}</label>
             </li>
         </ul>
     </div>
@@ -52,9 +61,9 @@
 
 <div class="row">
     <div class="col-2 mt-2">
-        <a class="btn btn-primary mt-3" data-toggle="collapse" href="#collapseChange" role="button" aria-expanded="false" aria-controls="collapseExample">
+        <button class="btn btn-primary mt-3" data-bs-toggle="collapse" data-bs-target="#collapseChange" aria-expanded="false" aria-controls="collapseExample">
             Change
-        </a>
+        </button>
     </div>
 
 </div>
@@ -65,14 +74,12 @@
         <form method="post" enctype="multipart/form-data">
 
             <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-            <div class="form-group">
-                <div class="custom-file">
-                    <input type="file" name="file" id="avatarFile">
-                    <label class="custom-file-label" for="avatarFile">Виберіть фото</label>
-                </div>
-            </div>
 
-            <div class="form-group row">
+            <label class="form-label" for="avatarFile">Виберіть фото</label>
+            <input class="form-control" type="file" name="file" id="avatarFile">
+
+
+            <div class="form-group row mt-3 mb-3">
 
                 <label class="col-sm-1 col-form-label">Логін:</label>
                 <div class="col-3 ml-0">
@@ -89,7 +96,7 @@
                     <input type="text" name="email" class="form-control" placeholder="New email" value="${user.email!""}">
                 </div>
             </div>
-            <div class="form-group row">
+            <div class="form-group row mb-3">
                 <label class="col-sm-1 col-form-label">Телефон:</label>
                 <div class="col-3 ml-0">
                     <input type="text" name="phone" class="form-control" placeholder="New phone" value="${user.phone!""}">
@@ -99,6 +106,7 @@
                 <div class="col-3 ml-0">
                     <input type="date" name="birthday" class="form-control" placeholder="New birthday" value="${user.getBirthdayString()!""}">
                 </div>
+
             </div>
             <button type="submit" class="btn btn-outline-success">Apply</button>
         </form>
@@ -130,4 +138,7 @@
 <nav class="nav">
     <a class="nav-link" href="${refUserVoc}">Мої слова</a>
 </nav>
+
+
+
 </@c.page>

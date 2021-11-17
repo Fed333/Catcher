@@ -36,8 +36,13 @@ public class User implements UserDetails {
     //реляційне відношення один до багатьох
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name="user_id")
-    //хібернейт підгрузить в цю колекцію, весь словниковий запас користувача
-    private List<ProgressWord> vocabulary = new LinkedList<>();
+    private List<ProgressWord> vocabulary;
+
+//    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy="user", fetch=FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
+//    @JoinColumn(name="user_id")
+    private List<CompletedTest> completedTests;
 
     @Column(name="name")
     private String name;
@@ -51,6 +56,9 @@ public class User implements UserDetails {
     @Column(name="level")
     @Enumerated(EnumType.STRING)
     private Level level;
+
+    @Column(name = "score")
+    private Integer score;
 
     @Column(name="date_of_birth")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -184,5 +192,31 @@ public class User implements UserDetails {
 
     public List<ProgressWord> getVocabulary() {
         return vocabulary;
+    }
+
+
+    public List<Word> getWords() {
+        List<Word> words = new LinkedList<>();
+        vocabulary.forEach(pw -> words.add(pw.getWord()));
+        return words;
+    }
+    public void setVocabulary(List<ProgressWord> vocabulary) {
+        this.vocabulary = vocabulary;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+    public List<CompletedTest> getCompletedTests() {
+        return completedTests;
+    }
+
+    public void setCompletedTests(List<CompletedTest> completedTests) {
+        this.completedTests = completedTests;
     }
 }

@@ -1,19 +1,31 @@
 package com.example.catcher.service;
 
+import com.example.catcher.algorithms.BinarySearch;
+import com.example.catcher.algorithms.EditorialDistance;
 import com.example.catcher.algorithms.SortOrder;
+import com.example.catcher.algorithms.Sorts;
 import com.example.catcher.domain.*;
+import com.example.catcher.dto.Task1QuestionsRequest;
+import com.example.catcher.repos.CompletedTestRepo;
 import com.example.catcher.repos.ProgressWordRepo;
+import com.example.catcher.repos.TestQuestionRepo;
 import com.example.catcher.repos.UserRepo;
+import com.sun.xml.bind.v2.util.EditDistance;
+import org.aspectj.weaver.ast.Test;
+import org.hibernate.Hibernate;
+import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -28,14 +40,26 @@ public class UserService implements UserDetailsService {
     @Autowired
     private ProgressWordRepo progressWordRepo;
 
+    @Autowired
+    private CompletedTestRepo completedTestRepo;
+
+    @Autowired
+    private TestQuestionRepo testQuestionRepo;
+
     @Value("${upload.path}")
     private String uploadPath;
+
+    public UserService() {
+    }
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         return userRepo.findByLogin(s);
     }
 
+    public User findUserById(Long id){
+        return userRepo.findById(id).get();
+    }
 
 
     public void updateProfile(User user, String login, String name, String email, String phone, String birthday, MultipartFile file) throws IOException {
@@ -86,7 +110,7 @@ public class UserService implements UserDetailsService {
     public void save(User user) {
         userRepo.save(user);
     }
-
+//    @Transactional
     public List<ProgressWord> search(User user, String languageFilter, String wordFilter, String a1, String a2, String b1, String b2) {
         List<ProgressWord> vocabulary = new LinkedList<>();
         Set<Level> levelsFilter = new HashSet<>();
@@ -116,7 +140,8 @@ public class UserService implements UserDetailsService {
             }
         }
         else{
-            Iterable<ProgressWord> all = user.getVocabulary();
+            Iterable<ProgressWord> all = this.getVocabulary(user);
+//            Iterable<ProgressWord> all = progressWordRepo.findByUserId(user.getId());
             for(ProgressWord pw: all){
                 if (levelsFilter.contains(pw.getWord().getLevel())){
                     vocabulary.add(pw);
@@ -130,7 +155,7 @@ public class UserService implements UserDetailsService {
 
         LinkedList<ProgressWord> found = new LinkedList<>();
         Pattern pattern = Pattern.compile(filter, Pattern.CASE_INSENSITIVE);
-        Iterable<ProgressWord> vocabulary = user.getVocabulary();
+        Iterable<ProgressWord> vocabulary = this.getVocabulary(user);
         for(ProgressWord pw: vocabulary){
             Matcher matcher = pattern.matcher(criterion.byCriterion(pw.getWord()));
             if (levelsFilter.contains(pw.getWord().getLevel()) && matcher.find()){
@@ -142,7 +167,7 @@ public class UserService implements UserDetailsService {
 
     public boolean learnWord(User user, Word word) {
         List<Long> words = new LinkedList<>();
-        List<ProgressWord> vocabulary = user.getVocabulary();
+        List<ProgressWord> vocabulary = this.getVocabulary(user);
         vocabulary.forEach(pw -> {
             words.add(pw.getWord().getId());
         });
@@ -152,7 +177,7 @@ public class UserService implements UserDetailsService {
             ProgressWord pw = new ProgressWord(user, word, new Date());
             //обов'язково зберігати цей об'єкт в бд. Інакше під час сеансу userRepo.save буде штампувати нові
             progressWordRepo.save(pw);
-            user.getVocabulary().add(pw);
+            vocabulary.add(pw);
             userRepo.save(user);
 
         }
@@ -161,5 +186,104 @@ public class UserService implements UserDetailsService {
 
     public User findById(Long id) {
         return userRepo.findById(id).get();
+    }
+
+
+//    @Transactional(readOnly = true)
+    public List<ProgressWord> getVocabulary(User user) {
+        List<ProgressWord> voc;
+        try {
+            voc = user.getVocabulary();
+            if (!Hibernate.isInitialized(voc)) {
+                Hibernate.initialize(voc);
+            }
+        } catch (LazyInitializationException e) {
+            User userFetched = userRepo.getById(user.getId());
+            voc = userFetched.getVocabulary();
+        }
+
+        return voc;
+    }
+
+    public List<Word> getLearnedWords(User user, int number) {
+        Random rnd = new Random(System.nanoTime());
+        List<Word> learnedWords = user.getWords();
+        List<Word> wordToLearn = new LinkedList<>();
+        while(number > 0){
+            int index = rnd.nextInt(learnedWords.size());
+            wordToLearn.add(learnedWords.remove(index));
+            --number;
+        }
+        return wordToLearn;
+    }
+//    @Transactional
+//    завдання 1 - переклад українських слів на англійску
+    public void checkTask1(User user, Task1QuestionsRequest task1) {
+
+        List<ProgressWord> vocabulary = new ArrayList<>();
+
+        vocabulary.addAll(getVocabulary(user));
+
+        Comparator<ProgressWord> comparatorTranslation = Comparator.comparing(o -> o.getWord().getTranslation());
+
+        vocabulary = Sorts.qSort(vocabulary, comparatorTranslation);
+        List<TestQuestion> response = task1.getTask1(); //масив із запитаннями та відповідями
+
+        int totalScore = 0;  //рахунок
+        CompletedTest test = new CompletedTest();
+        Iterator<TestQuestion> rIt = response.iterator();
+        while(rIt.hasNext()){ //tq.getQuestion() - питання українські слова, tq.getAnswer() - відповіді англійські
+            TestQuestion tq = rIt.next();
+            int index = BinarySearch.binarySearch((ArrayList<ProgressWord>) vocabulary, new ProgressWord(user, new Word(tq.getAnswer(), tq.getQuestion())), comparatorTranslation);
+            if (index < 0){
+                System.out.println("слова з перекладом " + tq.getQuestion() + " серед списку вивчених слів " + user.getLogin() + " не виявлено");
+                rIt.remove();
+                continue;
+            }
+            ProgressWord progress = vocabulary.get(index);
+            progress.setRevisionCount(progress.getRevisionCount()+1);   //додали одне повторення
+            progress.setLastRevisionDate(new Date());                   //оновили дату останнього повторення
+
+            //перевірку в нижньому регістрі без артиклів та допоміжних часток
+            String rightAnswer = progress.getWord().getWord().toLowerCase();          //правильна відповідь тут англійське слово
+            String studentRespond = tq.getAnswer().toLowerCase();                     //відповідь студента
+
+            rightAnswer = rightAnswer.replaceFirst("(a |an |to )", "");
+            studentRespond = studentRespond.replaceFirst("(a |an |to)", "");
+
+            double similarity;
+            try {
+                EditorialDistance distance = new EditorialDistance(rightAnswer, studentRespond);
+                similarity = distance.similarity();              //вирахувати схожість рядків (число від 0 до 1)
+            }
+            catch(EditorialDistance.OverwhelmedAmountOfMemoryException oe){
+                System.out.println(oe.getMessage());
+                System.out.println("УВАГА! Буде застосовано звичайне порівняння");
+                similarity = rightAnswer.toLowerCase().equals(tq.getAnswer().toLowerCase())?1.0:0.0;
+            }
+             if (similarity >= TestQuestion.acceptableSimilarity){     //відповідь зараховано якщо схожість вища заданого значення
+                tq.setPoints( (int)Math.floor(TestQuestion.maxPoints*similarity));
+                totalScore += tq.getPoints();
+                progress.setGuessingCount(progress.getGuessingCount()+1);
+
+            }
+            progressWordRepo.save(progress);
+            tq.setTest(test);
+        }
+
+        user.setScore(user.getScore()+totalScore);
+
+        test.setUser(user);
+        test.setScore(totalScore);
+        test.setQuestions(response);
+
+        completedTestRepo.save(test);
+
+        test.getQuestions().forEach(q->{
+            testQuestionRepo.save(q);
+        });
+
+        user.getCompletedTests().add(test);
+        userRepo.save(user);
     }
 }
