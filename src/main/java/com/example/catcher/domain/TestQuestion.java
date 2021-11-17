@@ -22,7 +22,8 @@ public class TestQuestion {
     @Column(name = "points")
     private Integer points;
 
-    public static final Integer maxPoints = 5; //максимум балів за одне питання
+    public static final Integer maxPoints = 5;              //максимум балів за одне питання
+    public static final Double acceptableSimilarity = 0.75;  //мінімальна схожість для зарахування слова
 
     public TestQuestion() {
         points = 0;

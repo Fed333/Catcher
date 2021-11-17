@@ -40,7 +40,7 @@ public class ProgressWord {
     @Column(name="studied")
     private Boolean studied;
 
-    public ProgressWord() {
+    private ProgressWord() {
         revisionCount = 0;
         guessingCount = 0;
         learnedDate = new Date();

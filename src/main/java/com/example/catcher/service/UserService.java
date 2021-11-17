@@ -1,6 +1,7 @@
 package com.example.catcher.service;
 
 import com.example.catcher.algorithms.BinarySearch;
+import com.example.catcher.algorithms.EditorialDistance;
 import com.example.catcher.algorithms.SortOrder;
 import com.example.catcher.algorithms.Sorts;
 import com.example.catcher.domain.*;
@@ -9,6 +10,7 @@ import com.example.catcher.repos.CompletedTestRepo;
 import com.example.catcher.repos.ProgressWordRepo;
 import com.example.catcher.repos.TestQuestionRepo;
 import com.example.catcher.repos.UserRepo;
+import com.sun.xml.bind.v2.util.EditDistance;
 import org.aspectj.weaver.ast.Test;
 import org.hibernate.Hibernate;
 import org.hibernate.LazyInitializationException;
@@ -217,7 +219,7 @@ public class UserService implements UserDetailsService {
 //    @Transactional
 //    завдання 1 - переклад українських слів на англійску
     public void checkTask1(User user, Task1QuestionsRequest task1) {
-    //    test(user);
+
         List<ProgressWord> vocabulary = new ArrayList<>();
 
         vocabulary.addAll(getVocabulary(user));
@@ -240,10 +242,27 @@ public class UserService implements UserDetailsService {
             }
             ProgressWord progress = vocabulary.get(index);
             progress.setRevisionCount(progress.getRevisionCount()+1);   //додали одне повторення
-            progress.setLastRevisionDate(new Date());               //оновили дату останнього повторення
-            String answer = progress.getWord().getWord();           //відповідь тут англійське слово
-            if (answer.toLowerCase().equals(tq.getAnswer().toLowerCase())){     //відповідь зараховано
-                tq.setPoints(TestQuestion.maxPoints);
+            progress.setLastRevisionDate(new Date());                   //оновили дату останнього повторення
+
+            //перевірку в нижньому регістрі без артиклів та допоміжних часток
+            String rightAnswer = progress.getWord().getWord().toLowerCase();          //правильна відповідь тут англійське слово
+            String studentRespond = tq.getAnswer().toLowerCase();                     //відповідь студента
+
+            rightAnswer = rightAnswer.replaceFirst("(a |an |to )", "");
+            studentRespond = studentRespond.replaceFirst("(a |an |to)", "");
+
+            double similarity;
+            try {
+                EditorialDistance distance = new EditorialDistance(rightAnswer, studentRespond);
+                similarity = distance.similarity();              //вирахувати схожість рядків (число від 0 до 1)
+            }
+            catch(EditorialDistance.OverwhelmedAmountOfMemoryException oe){
+                System.out.println(oe.getMessage());
+                System.out.println("УВАГА! Буде застосовано звичайне порівняння");
+                similarity = rightAnswer.toLowerCase().equals(tq.getAnswer().toLowerCase())?1.0:0.0;
+            }
+             if (similarity >= TestQuestion.acceptableSimilarity){     //відповідь зараховано якщо схожість вища заданого значення
+                tq.setPoints( (int)Math.floor(TestQuestion.maxPoints*similarity));
                 totalScore += tq.getPoints();
                 progress.setGuessingCount(progress.getGuessingCount()+1);
 
@@ -266,20 +285,5 @@ public class UserService implements UserDetailsService {
 
         user.getCompletedTests().add(test);
         userRepo.save(user);
-    }
-
-    private void test(User u){
-        List<ProgressWord> vocabulary = new ArrayList<>();
-        vocabulary.addAll(this.getVocabulary(u));
-
-        Comparator<ProgressWord> comparatorTranslation = Comparator.comparing(o -> o.getWord().getTranslation());
-        System.out.println("До сортування");
-        vocabulary.forEach(System.out::println);
-
-        vocabulary = Sorts.qSort(vocabulary, comparatorTranslation);
-        System.out.println("Після сортування");
-        vocabulary.forEach(System.out::println);
-
-
     }
 }
