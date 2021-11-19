@@ -35,7 +35,7 @@
                 </ul>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-black" aria-current="page" href="${refTest}">Завдання</a>
+                <a class="nav-link text-black" aria-current="page" href="${refTest}" id="testsId">Завдання</a>
             </li>
             <li><hr></li>
             <li class="nav-item">
