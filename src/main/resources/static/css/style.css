@@ -16,7 +16,7 @@ body{
      color: #000000;          /* колір тексту */
      background:#FFFFFF;    /* фон блоку */
      border-radius: 10px;   /* скруглення країв */
-     padding: 5px;          /* відступи */
+     padding: 10px;          /* відступи */
 }
 
 .b-correct {
