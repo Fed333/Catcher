@@ -1,0 +1,13 @@
+
+body{
+    background-color: #ADD8E6;
+}
+
+.content {
+    min-height: calc(100vh - 30px);
+}
+
+.footer {
+    height: 30px;
+    background-color: rgba(0, 0, 0, 0.05);
+}

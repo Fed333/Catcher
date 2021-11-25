@@ -27,11 +27,12 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/basic/**")
+
+        registry.addResourceHandler("/basic/**")            //базові зображення
                 .addResourceLocations("file://" + basicPath + "/");
-        registry.addResourceHandler("/img/**")
+        registry.addResourceHandler("/img/**")              //зображення завантажені користувачами
                 .addResourceLocations("file://" + uploadPath + "/" );
-        registry.addResourceHandler("/word_img/**")
+        registry.addResourceHandler("/word_img/**")         //зображення слів словника
                 .addResourceLocations("file://" + wordsPath + "/");
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/");

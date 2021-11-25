@@ -1,3 +1,4 @@
+<#import "footer.ftl" as f>
 <#macro page title>
 
 <!DOCTYPE>
@@ -21,17 +22,22 @@
 <!--For Masonry-->
     <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
 
-    <link rel="stylesheet" href="/static/css/styleBackground.css">
+    <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/styleWordEdit.css">
     <link rel="stylesheet" href="/static/css/table_align-center-middle.css">
     <link rel="stylesheet" href="/static/css/disabledLink.css">
     <link rel="stylesheet" href="/static/css/offcanvas_style.css">
 </head>
 <body>
+
+<div class="content">
 <#include "navbar.ftl"/>
-<div class="container mt-4">
-    <#nested>
+    <div class="container mt-4">
+        <#nested>
+    </div>
 </div>
+
+<@f.footer/>
 
 
 </body>
