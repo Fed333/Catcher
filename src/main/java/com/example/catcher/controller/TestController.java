@@ -1,5 +1,6 @@
 package com.example.catcher.controller;
 
+import com.example.catcher.domain.CompletedTest;
 import com.example.catcher.domain.User;
 import com.example.catcher.domain.Word;
 import com.example.catcher.dto.Task1QuestionsRequest;
@@ -54,9 +55,9 @@ public class TestController {
             Model model
     )
     {
-        userService.checkTask1(user, task1);
+        CompletedTest test = userService.checkTask1(user, task1);
         model.addAttribute("user", user);
-        return "redirect:/profile";
+        return String.format("redirect:/test_review/%d", test.getId());
     }
 
 

@@ -28,7 +28,7 @@
     </div>
 </div>
 
-    <#if task1Review??>
+<#if task1Review??>
     <#assign i = 1>
     <#list task1Review as r>
     <div class="row mt-2">

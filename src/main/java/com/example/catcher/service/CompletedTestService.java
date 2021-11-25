@@ -24,22 +24,45 @@ public class CompletedTestService {
     private TestQuestionRepo testQuestionRepo;
 
     @Transactional(readOnly = true)
-    public List<TestQuestion> getTestQuestion(CompletedTest test){
+    public List<TestQuestion> getTestQuestion(CompletedTest completedTest){
+        if (completedTest == null){
+            return null;
+        }
         List<TestQuestion> questions;
         try{
-            if (!Hibernate.isInitialized(test)) {
-                Hibernate.initialize(test);
+            if (!Hibernate.isInitialized(completedTest)) {
+                Hibernate.initialize(completedTest);
             }
-            questions = test.getQuestions();
+            questions = completedTest.getQuestions();
             if (!Hibernate.isInitialized(questions)){
                 Hibernate.initialize(questions);
             }
         }
         catch(LazyInitializationException le){
             System.out.println("still caught lazyInitializationException");
-            questions = testQuestionRepo.findAllByTestId(test.getId());
+            questions = testQuestionRepo.findAllByTestId(completedTest.getId());
         }
         return questions;
 
+    }
+
+    public int getTotalTestScore(CompletedTest completedTest) {
+        List<TestQuestion> tests = getTestQuestion(completedTest);
+        int totalScore = 0;
+        for (TestQuestion tq: tests) {
+            totalScore += tq.getPoints();
+        }
+        return totalScore;
+    }
+
+    //повертає точність, число від 0 до 1
+    public double getTestAccuracy(CompletedTest completedTest) {
+        List<TestQuestion> list = getTestQuestion(completedTest);
+        double accuracy = 0;
+        for (TestQuestion tq: list) {
+            accuracy += tq.getSimilarity();
+        }
+        accuracy = accuracy/(100*list.size());
+        return accuracy;
     }
 }

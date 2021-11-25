@@ -10,6 +10,7 @@ import com.example.catcher.repos.CompletedTestRepo;
 import com.example.catcher.repos.ProgressWordRepo;
 import com.example.catcher.repos.TestQuestionRepo;
 import com.example.catcher.repos.UserRepo;
+import com.sun.istack.NotNull;
 import com.sun.xml.bind.v2.util.EditDistance;
 import org.aspectj.weaver.ast.Test;
 import org.hibernate.Hibernate;
@@ -222,8 +223,7 @@ public class UserService implements UserDetailsService {
     }
 //    @Transactional
 //    завдання 1 - переклад українських слів на англійску
-    public void checkTask1(User user, Task1QuestionsRequest task1) {
-
+    public CompletedTest checkTask1(User user, Task1QuestionsRequest task1) {
         List<ProgressWord> vocabulary = new ArrayList<>();
 
         vocabulary.addAll(getVocabulary(user));
@@ -296,6 +296,7 @@ public class UserService implements UserDetailsService {
 
         user.getCompletedTests().add(test);
         userRepo.save(user);
+        return test;
     }
 
     public CompletedTest getUsersCompletedTest(User user, Long testId) {
@@ -316,5 +317,25 @@ public class UserService implements UserDetailsService {
             }
         }
         return test;
+    }
+
+    public List<TestQuestion> getTask1Review(User user, CompletedTest completedTest) {
+        //тест не належить цьому користувачеві
+        Long testId = completedTest.getId();
+        Long userId = user.getId();
+        if (!userId.equals(completedTest.getUserId())){
+            return null;
+        }
+        List<TestQuestion> testQuestions = null;
+        try{
+            testQuestions = completedTest.getQuestions();
+            if (!Hibernate.isInitialized(testQuestions)){
+                Hibernate.initialize(testQuestions);
+            }
+        }
+        catch(LazyInitializationException le){
+            testQuestions = testQuestionRepo.findAllByTestId(testId);
+        }
+        return testQuestions;
     }
 }
