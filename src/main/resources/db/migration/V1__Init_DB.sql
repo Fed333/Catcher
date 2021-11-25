@@ -15,6 +15,10 @@ CREATE SEQUENCE public.completed_tests_id_seq
     START WITH 1
     INCREMENT BY 1;
 
+CREATE SEQUENCE public.test_questions_id_seq
+    START WITH 1
+    INCREMENT BY 1;
+
 CREATE TABLE public.dictionary (
     id BIGINT NOT NULL DEFAULT nextval('public.dictionary_id_seq'::regclass),
     translation VARCHAR(128) NOT NULL,
@@ -65,10 +69,12 @@ CREATE TABLE public.completed_tests (
 );
 
 CREATE TABLE public.test_questions(
+    id BIGINT DEFAULT nextval('public.test_questions_id_seq'::regclass),
     test_id BIGINT NOT NULL,
     question VARCHAR(128) NOT NULL,
     answer VARCHAR(128) NOT NULL,
-    points INTEGER
+    points INTEGER,
+    PRIMARY KEY(id)
 );
 
 ALTER TABLE IF EXISTS progress_word ADD CONSTRAINT FK_Progress_Word_Users FOREIGN KEY (user_id) REFERENCES users;
