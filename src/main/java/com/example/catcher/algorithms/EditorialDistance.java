@@ -1,11 +1,15 @@
 package com.example.catcher.algorithms;
 
+import com.example.catcher.domain.User;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class EditorialDistance {
-    private static Map<Pair<String, String>, Integer> hashDistances = new HashMap<>();
+    private Map<Pair<String, String>, Integer> hashDistances = new HashMap<>();
     private String source;
     private String collate;
 
@@ -16,10 +20,18 @@ public class EditorialDistance {
         source = s;
         collate = c;
     }
+
+
     //Пошук відстанні Левентшейна алгоритмом Вагнера-Фішера
     private int levenshtein(){
         int n = source.length();
         int m = collate.length();
+
+        if (n == 0 || m == 0){
+            //якшо один рядок порожній к-ть операцій рівна к-ть видалень чи вставок
+            return Math.max(n, m);
+        }
+
         //1. Проініціалізувати двовимірний масив початковими значенням
         int[][] d = new int[n+1][m+1];
 
@@ -57,16 +69,28 @@ public class EditorialDistance {
         return d[n-1][m-1];
     }
 
-    //обрахує редакційну відстань
+    private void printLog(String operation, long operationTime){
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        System.out.printf(
+                "[Дата]: %20s | [Операція]: %25s | [Значення]: {'%15s', '%15s'} | [Час]: %8d нс\n",
+                dateFormat.format(date), operation, source, collate, operationTime
+        );
+    }
+
+    //обраховує редакційну відстань
     public int dist(){
         Pair<String, String> key = new Pair<>(source, collate);
+        //якщо значення присутнє в хеш таблиці
         if (hashDistances.containsKey(key)){
-
+            //дістаємо його за O(1) - в кращому, O(n) - в гіршому
             return hashDistances.get(key);
         }
+        //якщо ж його там немає
         else{
-
+            //вираховуємо його за O(n*m) алгоритмом Вагнера Фішера
             int res = levenshtein();
+            //додаємо в хеш-таблицю
             hashDistances.put(key, res);
             return res;
         }
@@ -95,6 +119,34 @@ public class EditorialDistance {
                     "Розмір масиву " + length1*length2 + " перевищує допустиму " + forbiddenCapacity
             );
 
+        }
+    }
+
+    public Map<Pair<String, String>, Integer> getHashDistances() {
+        return hashDistances;
+    }
+
+    public void setHashDistances(Map<Pair<String, String>, Integer> hashDistances) {
+        this.hashDistances = hashDistances;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        if (source != null) {
+            this.source = source;
+        }
+    }
+
+    public String getCollate() {
+        return collate;
+    }
+
+    public void setCollate(String collate) {
+        if (collate != null) {
+            this.collate = collate;
         }
     }
 }

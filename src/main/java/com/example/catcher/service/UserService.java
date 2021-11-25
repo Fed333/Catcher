@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -205,9 +206,12 @@ public class UserService implements UserDetailsService {
         return voc;
     }
 
-    public List<Word> getLearnedWords(User user, int number) {
+    public List<Word> getRandomLearnedWords(User user, int number) {
         Random rnd = new Random(System.nanoTime());
         List<Word> learnedWords = user.getWords();
+        if (learnedWords.size() < number){
+            return null;
+        }
         List<Word> wordToLearn = new LinkedList<>();
         while(number > 0){
             int index = rnd.nextInt(learnedWords.size());
@@ -242,18 +246,20 @@ public class UserService implements UserDetailsService {
             }
             ProgressWord progress = vocabulary.get(index);
             progress.setRevisionCount(progress.getRevisionCount()+1);   //додали одне повторення
-            progress.setLastRevisionDate(new Date());                   //оновили дату останнього повторення
+            //класти туди Timestamp щоб freemarker його розпарсив у шаблоні userVocabulary
+            progress.setLastRevisionDate(new Timestamp(new Date().getTime()));                   //оновили дату останнього повторення
 
             //перевірку в нижньому регістрі без артиклів та допоміжних часток
             String rightAnswer = progress.getWord().getWord().toLowerCase();          //правильна відповідь тут англійське слово
             String studentRespond = tq.getAnswer().toLowerCase();                     //відповідь студента
 
-            rightAnswer = rightAnswer.replaceFirst("(a |an |to )", "");
-            studentRespond = studentRespond.replaceFirst("(a |an |to)", "");
+            rightAnswer = rightAnswer.replaceFirst("(^a |^the |^an |^to )", "");
+            studentRespond = studentRespond.replaceFirst("(^a |^the |^an |^to )", "");
 
             double similarity;
             try {
                 EditorialDistance distance = new EditorialDistance(rightAnswer, studentRespond);
+                distance.setHashDistances(user.getCache());
                 similarity = distance.similarity();              //вирахувати схожість рядків (число від 0 до 1)
             }
             catch(EditorialDistance.OverwhelmedAmountOfMemoryException oe){

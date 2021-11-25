@@ -140,5 +140,21 @@
 </nav>
 
 
+<#if disableTestLink??>
+    <script>
+        let link = document.getElementById('testsId');
+        if (typeof(link) != 'undefined' && link != null){
+            link.setAttribute("class", "disabled-link");
+        }
+    </script>
+</#if>
+
+<#if warning??>
+        <label hidden id="messageId">${warning}</label>
+        <script src="/static/js/warningTests.js"></script>
+        <script>
+            warningMessage(messageId.textContent);
+        </script>
+</#if>
 
 </@c.page>

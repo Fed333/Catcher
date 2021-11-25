@@ -1,5 +1,6 @@
 package com.example.catcher.domain;
 
+import com.example.catcher.algorithms.Pair;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -65,6 +66,8 @@ public class User implements UserDetails {
     @Temporal(TemporalType.DATE)
     private Date birthday;
 
+    @Transient
+    private Map<Pair<String, String>, Integer> cache = new HashMap<>();
 
     public User() {
         level = A1;
@@ -218,5 +221,13 @@ public class User implements UserDetails {
 
     public void setCompletedTests(List<CompletedTest> completedTests) {
         this.completedTests = completedTests;
+    }
+
+    public Map<Pair<String, String>, Integer> getCache() {
+        return cache;
+    }
+
+    public void setCache(Map<Pair<String, String>, Integer> cache) {
+        this.cache = cache;
     }
 }
