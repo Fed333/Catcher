@@ -73,7 +73,9 @@ CREATE TABLE public.test_questions(
     test_id BIGINT NOT NULL,
     question VARCHAR(128) NOT NULL,
     answer VARCHAR(128) NOT NULL,
-    points INTEGER,
+    points INTEGER NOT NULL,
+    right_answer VARCHAR(128) NOT NULL,
+    similarity INTEGER NOT NULL,
     PRIMARY KEY(id)
 );
 

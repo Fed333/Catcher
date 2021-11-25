@@ -1,6 +1,26 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 10.16
+-- Dumped by pg_dump version 10.16
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Data for Name: dictionary; Type: TABLE DATA; Schema: public; Owner: postgres
+--
 
 INSERT INTO public.dictionary VALUES (5, 'остерігатися, берегтися', 'to watch out', 'B1', NULL);
-INSERT INTO public.dictionary VALUES (6, 'суперечити чийсь релігії/переконаня', 'against one''s religion/beliefs', 'B1', NULL);
 INSERT INTO public.dictionary VALUES (7, 'невічливий', 'impolite', 'A1', NULL);
 INSERT INTO public.dictionary VALUES (9, 'внесок', 'a contribution', 'B2', NULL);
 INSERT INTO public.dictionary VALUES (10, 'понаднормовий', 'overtime', 'B1', NULL);
@@ -113,5 +133,14 @@ INSERT INTO public.dictionary VALUES (113, 'вартий', 'worthwhile', 'B1', N
 INSERT INTO public.dictionary VALUES (114, 'продавати', 'to market', 'B1', NULL);
 INSERT INTO public.dictionary VALUES (115, 'слідувати', 'to follow', 'A2', NULL);
 INSERT INTO public.dictionary VALUES (116, 'захворювання', 'illness', 'A2', NULL);
+INSERT INTO public.dictionary VALUES (117, 'кінь', 'horse', 'B1', NULL);
+INSERT INTO public.dictionary VALUES (118, 'масло', 'butter', 'A1', NULL);
+INSERT INTO public.dictionary VALUES (6, 'суперечити чийсь релігії/переконання', 'against one''s religion/beliefs', 'B1', NULL);
+INSERT INTO public.dictionary VALUES (119, 'раковина', 'sink', 'A2', NULL);
 
-ALTER SEQUENCE public.dictionary_id_seq RESTART WITH 116;
+
+--
+-- PostgreSQL database dump complete
+--
+
+ALTER SEQUENCE public.dictionary_id_seq RESTART WITH 120;
