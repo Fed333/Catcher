@@ -249,9 +249,13 @@ public class UserService implements UserDetailsService {
             //класти туди Timestamp щоб freemarker його розпарсив у шаблоні userVocabulary
             progress.setLastRevisionDate(new Timestamp(new Date().getTime()));                   //оновили дату останнього повторення
 
+
+            String rightAnswer = progress.getWord().getWord();
+            tq.setRightAnswer(rightAnswer);
+
             //перевірку в нижньому регістрі без артиклів та допоміжних часток
-            String rightAnswer = progress.getWord().getWord().toLowerCase();          //правильна відповідь тут англійське слово
-            String studentRespond = tq.getAnswer().toLowerCase();                     //відповідь студента
+            rightAnswer = rightAnswer.toLowerCase();                    //правильна відповідь тут англійське слово
+            String studentRespond = tq.getAnswer().toLowerCase();       //відповідь студента
 
             rightAnswer = rightAnswer.replaceFirst("(^a |^the |^an |^to )", "");
             studentRespond = studentRespond.replaceFirst("(^a |^the |^an |^to )", "");
@@ -275,6 +279,7 @@ public class UserService implements UserDetailsService {
             }
             progressWordRepo.save(progress);
             tq.setTest(test);
+            tq.setSimilarity((int)(similarity*100));
         }
 
         user.setScore(user.getScore()+totalScore);

@@ -19,17 +19,24 @@ public class TestQuestion {
     @Column(name="answer")
     private String answer;
 
+    @Column(name="rightAnswer")
+    private String rightAnswer;
+
     @Column(name = "points")
     private Integer points;
+
+    @Column(name = "similarity")
+    private Integer similarity;
 
     public static final Integer maxPoints = 5;              //максимум балів за одне питання
     public static final Double acceptableSimilarity = 0.75;  //мінімальна схожість для зарахування слова
 
     public TestQuestion() {
         points = 0;
+        similarity = 0;
     }
 
-    public TestQuestion(String question, String answer) {
+    public TestQuestion(String question, String answer, String rightAnswer) {
         this();
         this.question = question;
         this.answer = answer;
@@ -73,5 +80,21 @@ public class TestQuestion {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getRightAnswer() {
+        return rightAnswer;
+    }
+
+    public void setRightAnswer(String rightAnswer) {
+        this.rightAnswer = rightAnswer;
+    }
+
+    public Integer getSimilarity() {
+        return similarity;
+    }
+
+    public void setSimilarity(Integer similarity) {
+        this.similarity = similarity;
     }
 }
