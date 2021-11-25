@@ -63,6 +63,7 @@ public class User implements UserDetails {
 
     public User() {
         level = A1;
+        score = 0;
     }
 
     public boolean isAdmin(){

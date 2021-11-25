@@ -8,4 +8,4 @@ INSERT INTO public.users VALUES (4, '_vlad', 'vladiuslav', '1234', '2002-10-28 0
 INSERT INTO public.user_role
 VALUES (1, 'STUDENT'), (1, 'TEACHER'), (1, 'ADMIN'), (2, 'STUDENT'), (2, 'TEACHER'), (2, 'ADMIN'), (3, 'STUDENT'), (4, 'STUDENT');
 
-ALTER SEQUENCE public.user_id_seq RESTART WITH 4;
+ALTER SEQUENCE public.user_id_seq RESTART WITH 5;
