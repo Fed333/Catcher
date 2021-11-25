@@ -297,4 +297,24 @@ public class UserService implements UserDetailsService {
         user.getCompletedTests().add(test);
         userRepo.save(user);
     }
+
+    public CompletedTest getUsersCompletedTest(User user, Long testId) {
+        CompletedTest test = null;
+        List<CompletedTest> tests = null;
+        try{
+           tests = user.getCompletedTests();
+        }
+        catch(LazyInitializationException le){
+            tests = completedTestRepo.findAllByUserId(user.getId());
+        }
+        if (tests != null) {
+            for (CompletedTest t : tests) {
+                if (t.getId().equals(testId)) {
+                    test = t;
+                    break;
+                }
+            }
+        }
+        return test;
+    }
 }

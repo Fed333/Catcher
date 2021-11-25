@@ -11,4 +11,5 @@ public interface CompletedTestRepo extends JpaRepository<CompletedTest, Long> {
     List<CompletedTest> findAll();
     @Override
     Optional<CompletedTest> findById(Long id);
+    List<CompletedTest> findAllByUserId(Long id);
 }

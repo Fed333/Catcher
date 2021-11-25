@@ -1,0 +1,33 @@
+
+body{
+    background-color: #ADD8E6;
+}
+
+.content {
+    min-height: calc(100vh - 30px);
+}
+
+.footer {
+    height: 30px;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.rounded-rec {
+     color: #000000;          /* колір тексту */
+     background:#FFFFFF;    /* фон блоку */
+     border-radius: 10px;   /* скруглення країв */
+     padding: 5px;          /* відступи */
+}
+
+.b-correct {
+     background: #03AC13;
+     font-weight: bold;
+}
+
+.b-wrong {
+     background: #FA8072;
+}
+
+.b-acceptable {
+    background: #EFFD5F;
+}
