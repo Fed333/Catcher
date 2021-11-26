@@ -40,6 +40,7 @@ public class TestQuestion {
         this();
         this.question = question;
         this.answer = answer;
+        this.rightAnswer = rightAnswer;
     }
 
     public CompletedTest getTest() {
