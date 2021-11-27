@@ -19,13 +19,13 @@ public class SearchUserController {
 
     @GetMapping
     public String userSearch(
-            @RequestParam(name="login") String login,
-            @RequestParam(name="name") String name,
+            @RequestParam(name="login", required = false, defaultValue = "") String login,
+            @RequestParam(name="name", required = false, defaultValue = "") String name,
             Model model
     )
     {
         List<User> foundUsers = userService.searchUsersBy(login, name);
-        if (foundUsers != null){
+        if (foundUsers != null && !foundUsers.isEmpty()){
             model.addAttribute("users", foundUsers);
         }
         return "userSearch";
