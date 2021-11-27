@@ -338,7 +338,7 @@ public class UserService implements UserDetailsService {
         return testQuestions;
     }
 
-    public List<User> searchUsersBy(String login, boolean filterSearch, String name, String phone, String email) {
+    public List<User> searchUsersBy(String login, boolean filterSearch, String name, String phone, String email, Set<Level> levels) {
         List<User> users = null;
         if (!filterSearch && login != null && !login.isEmpty()){
             users = userRepo.findAllByLogin(login);
@@ -347,7 +347,7 @@ public class UserService implements UserDetailsService {
             users = new LinkedList<>();
             List<User> allUsers = userRepo.findAll();
             for (User u: allUsers) {
-                if (isSuitable(u, name, phone, email)){
+                if (isSuitable(u, name, phone, email, levels)){
                     users.add(u);
                 }
             }
@@ -355,15 +355,17 @@ public class UserService implements UserDetailsService {
         return users;
     }
 
-    private boolean isSuitable(User user, String name, String phone, String email) {
+    private boolean isSuitable(User user, String name, String phone, String email, Set<Level> levels) {
         if (user == null){
             return false;
         }
 
         boolean suitable = true;
-        if (name != null && !name.isEmpty()) {
+        if (levels != null && !levels.isEmpty()){
+            suitable = levels.contains(user.getLevel());
+        }
+        if (name != null && !name.isEmpty() && suitable) {
             suitable = (user.getName() != null && !user.getName().isEmpty()) && Pattern.compile(name, Pattern.CASE_INSENSITIVE).matcher(user.getName()).find();
-
         }
         if (suitable && phone != null && !phone.isEmpty()){
             suitable = phone.replaceAll("^\\+38", "").equals(user.getPhone().replaceAll("^\\+38", ""));
