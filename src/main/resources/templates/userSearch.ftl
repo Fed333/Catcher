@@ -13,14 +13,14 @@
 
 <div class="form-group mt-3">
 
-    <form action="${refUserSearch}" method="get" >
+    <form action="${refUserSearch}" method="get" id="formUserSearchId">
         <input type="hidden" name="showCollapse" value="${showCollapse!"false"}" id="showCollapseId">
         <div class="form-group row">
-            <div class="col-4">
+            <div class="col-3">
                 <input type="text" name="login" class="form-control" placeholder="Login" value="${login!""}">
             </div>
             <div class="col-2">
-                <button type="submit" class="btn btn-outline-success">Пошук</button>
+                <button type="submit" onclick="printLogLevels" class="btn btn-outline-success">Пошук</button>
             </div>
         </div>
         <div class="form-group row mb-3">
@@ -43,7 +43,7 @@
                 </div>
 
                 <label class="col-1 col-form-label">Пошта</label>
-                <div class="col-2">
+                <div class="col-3">
                     <input type="email" name="email" class="form-control" placeholder="adress@email.com" value="${email!""}">
                 </div>
             </div>
@@ -54,22 +54,22 @@
                 </div>
                 <div class="col">
                     <div class="form-check form-check-inline">
-                        <input type="checkbox" class="form-check-input" name="levels" id="checkBoxA1">
+                        <input type="checkbox" value="a1" class="form-check-input" name="levels" id="checkBoxA1">
                         <label class="form-check-label" for="checkBoxA1">A1</label>
                     </div>
 
                     <div class="form-check form-check-inline">
-                        <input type="checkbox" class="form-check-input" name="levels" id="checkBoxA2">
+                        <input type="checkbox" value="a2" class="form-check-input" name="levels" id="checkBoxA2">
                         <label class="form-check-label" for="checkBoxA2">A2</label>
                     </div>
 
                     <div class="form-check form-check-inline">
-                        <input type="checkbox" class="form-check-input" name="levels" id="checkBoxB1">
+                        <input type="checkbox" value="b1" class="form-check-input" name="levels" id="checkBoxB1">
                         <label class="form-check-label" for="checkBoxB1">B1</label>
                     </div>
 
                     <div class="form-check form-check-inline">
-                        <input type="checkbox" class="form-check-input" name="levels" id="checkBoxB2">
+                        <input type="checkbox" value="b2" class="form-check-input" name="levels" id="checkBoxB2">
                         <label class="form-check-label" for="checkBoxB2">B2</label>
                     </div>
 
@@ -78,7 +78,6 @@
 
         </div>
     </form>
-
     <script>displayCollapse("collapseUserFilterButton", "userFilter", "showCollapseId");</script>
 
 </div>
