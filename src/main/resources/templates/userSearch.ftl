@@ -9,18 +9,77 @@
     </div>
 </div>
 
+<script src="/static/js/displayCollapse.js"></script>
+
 <div class="form-group mt-3">
 
     <form action="${refUserSearch}" method="get" >
+        <input type="hidden" name="showCollapse" value="${showCollapse!"false"}" id="showCollapseId">
         <div class="form-group row">
             <div class="col-4">
-                <input type="text" name="login" class="form-control" placeholder="Login">
+                <input type="text" name="login" class="form-control" placeholder="Login" value="${login!""}">
             </div>
             <div class="col-2">
                 <button type="submit" class="btn btn-outline-success">Пошук</button>
             </div>
         </div>
+        <div class="form-group row mb-3">
+            <div class="col-2">
+                <button class="btn btn-primary mt-3"  name="collapseUserFilterButton" value="on" type="button" data-bs-toggle="collapse" data-bs-target="#userFilter" aria-controls="userFilter" id="collapseUserFilterButton" onclick="switchCollapse('showCollapseId')">
+                    Фільтр
+                </button>
+            </div>
+        </div>
+        <div id="userFilter">
+            <div class="form-group row mt-2">
+                <label class="col-1 col-form-label">Ім'я</label>
+                <div class="col-2">
+                    <input type="text" name="name" class="form-control" placeholder="Ім'я" value="${name!""}">
+                </div>
+
+                <label class="col-1 col-form-label">Телефон</label>
+                <div class="col-2">
+                    <input type="text" name="phone" class="form-control" placeholder="Телефон" maxlength="13" value="${phone!""}">
+                </div>
+
+                <label class="col-1 col-form-label">Пошта</label>
+                <div class="col-2">
+                    <input type="email" name="email" class="form-control" placeholder="adress@email.com" value="${email!""}">
+                </div>
+            </div>
+
+            <div class="form-group row mt-4">
+                <div class="col-1">
+                    <label class="form-check-inline">Рівень</label>
+                </div>
+                <div class="col">
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="levels" id="checkBoxA1">
+                        <label class="form-check-label" for="checkBoxA1">A1</label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="levels" id="checkBoxA2">
+                        <label class="form-check-label" for="checkBoxA2">A2</label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="levels" id="checkBoxB1">
+                        <label class="form-check-label" for="checkBoxB1">B1</label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="levels" id="checkBoxB2">
+                        <label class="form-check-label" for="checkBoxB2">B2</label>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
     </form>
+
+    <script>displayCollapse("collapseUserFilterButton", "userFilter", "showCollapseId");</script>
 
 </div>
 
