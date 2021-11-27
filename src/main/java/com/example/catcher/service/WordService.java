@@ -25,7 +25,7 @@ public class WordService {
     private String wordsPath;
 
     public Word createWord(String meaning, String translation, Level level, MultipartFile imgFile) throws IOException {
-        if (isValid(meaning, translation, level)){
+        if (isSuitable(meaning, translation, level)){
             Word word = new Word();
             word.setWord(meaning);
             word.setTranslation(translation);
@@ -55,7 +55,7 @@ public class WordService {
     }
 
     public boolean update(Word word, String meaning, String translation, Level level, MultipartFile file) {
-        if (isValid(meaning, translation, level)) {
+        if (isSuitable(meaning, translation, level)) {
             word.setWord(meaning);
             word.setTranslation(translation);
             word.setLevel(level);
@@ -93,7 +93,7 @@ public class WordService {
         return true;
     }
 
-    private boolean isValid(String w, String t, Level l){
+    private boolean isSuitable(String w, String t, Level l){
         return (w != null && !w.isEmpty() && t != null && !t.isEmpty() && l != null);
     }
 
