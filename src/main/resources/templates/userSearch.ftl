@@ -10,12 +10,15 @@
 </div>
 
 <script src="/static/js/displayCollapse.js"></script>
+<script src="/static/js/setLevelsCheckForms.js"></script>
 
 <div class="form-group mt-3">
 
     <form action="${refUserSearch}" method="get" id="formUserSearchId">
         <input type="hidden" name="showCollapse" value="${showCollapse!"false"}" id="showCollapseId">
+        <input type="hidden" value="${selectedLevels!"[]"}" id="selectedLevels"> <!--масив вибраних checkbox у вигляді рядка-->
         <div class="form-group row">
+            <label class="col-1 col-form-label">Логін</label>
             <div class="col-3">
                 <input type="text" name="login" class="form-control" placeholder="Login" value="${login!""}">
             </div>
@@ -54,7 +57,7 @@
                 </div>
                 <div class="col">
                     <div class="form-check form-check-inline">
-                        <input type="checkbox" value="a1" class="form-check-input" name="levels" id="checkBoxA1">
+                        <input type="checkbox" value="a1" class="form-check-input" name="levels" id="checkBoxA1" >
                         <label class="form-check-label" for="checkBoxA1">A1</label>
                     </div>
 
@@ -79,7 +82,7 @@
         </div>
     </form>
     <script>displayCollapse("collapseUserFilterButton", "userFilter", "showCollapseId");</script>
-
+    <script>setLevelsCheckForms("selectedLevels", "checkBox");</script>
 </div>
 
 <div class="row">
