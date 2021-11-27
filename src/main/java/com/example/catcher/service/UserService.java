@@ -340,7 +340,7 @@ public class UserService implements UserDetailsService {
 
     public List<User> searchUsersBy(String login, String name) {
         List<User> users = null;
-        if (login != null && !name.isEmpty()){
+        if (login != null && !login.isEmpty()){
             users = userRepo.findAllByLogin(login);
         }
         else {
