@@ -20,7 +20,7 @@
                 <input type="text" name="login" class="form-control" placeholder="Login" value="${login!""}">
             </div>
             <div class="col-2">
-                <button type="submit" onclick="printLogLevels" class="btn btn-outline-success">Пошук</button>
+                <button type="submit" class="btn btn-outline-success">Пошук</button>
             </div>
         </div>
         <div class="form-group row mb-3">
