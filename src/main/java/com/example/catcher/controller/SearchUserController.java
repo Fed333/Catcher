@@ -21,6 +21,7 @@ public class SearchUserController {
     public String userSearch(
             @RequestParam(name="login", required = false, defaultValue = "") String login,
             @RequestParam(name="name", required = false, defaultValue = "") String name,
+            @RequestParam(name="showCollapse", required = false, defaultValue = "false") String showCollapse,
             Model model
     )
     {
@@ -28,6 +29,9 @@ public class SearchUserController {
         if (foundUsers != null && !foundUsers.isEmpty()){
             model.addAttribute("users", foundUsers);
         }
+        model.addAttribute("login", login);
+        model.addAttribute("name", name);
+        model.addAttribute("showCollapse", showCollapse);
         return "userSearch";
     }
 }
