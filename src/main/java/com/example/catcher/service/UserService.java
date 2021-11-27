@@ -338,16 +338,16 @@ public class UserService implements UserDetailsService {
         return testQuestions;
     }
 
-    public List<User> searchUsersBy(String login, String name) {
+    public List<User> searchUsersBy(String login, boolean filterSearch, String name, String phone, String email) {
         List<User> users = null;
-        if (login != null && !login.isEmpty()){
+        if (!filterSearch && login != null && !login.isEmpty()){
             users = userRepo.findAllByLogin(login);
         }
         else {
             users = new LinkedList<>();
             List<User> allUsers = userRepo.findAll();
             for (User u: allUsers) {
-                if (isSuitable(u, name)){
+                if (isSuitable(u, name, phone, email)){
                     users.add(u);
                 }
             }
@@ -355,8 +355,24 @@ public class UserService implements UserDetailsService {
         return users;
     }
 
-    private boolean isSuitable(User user, String name) {
-        return (user != null && user.getName().equalsIgnoreCase(name));
+    private boolean isSuitable(User user, String name, String phone, String email) {
+        if (user == null){
+            return false;
+        }
+
+        boolean suitable = true;
+        if (name != null && !name.isEmpty()) {
+            suitable = (user.getName() != null && !user.getName().isEmpty()) && Pattern.compile(name, Pattern.CASE_INSENSITIVE).matcher(user.getName()).find();
+
+        }
+        if (suitable && phone != null && !phone.isEmpty()){
+            suitable = phone.replaceAll("^\\+38", "").equals(user.getPhone().replaceAll("^\\+38", ""));
+        }
+        if (suitable && email != null && !email.isEmpty()){
+            suitable = Pattern.matches(email, user.getEmail());
+        }
+
+        return suitable;
     }
 
 
