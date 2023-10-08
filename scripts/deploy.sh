@@ -14,8 +14,8 @@ echo 'Restarting server...'
 
 ssh -tt -i ~/.ssh/Catcher.pem ec2-user@"$HOST_INSTANCE_ADDRESS" << EOF
 
-pgrep java | xargs kill -9
-nohup java -jar ~/Catcher/catcher-1.0-SNAPSHOT.jar > log.txt &
+sudo mv ~/Catcher/* /var/www/catcher/Catcher/
+sudo systemctl restart catcher
 logout
 EOF
 
