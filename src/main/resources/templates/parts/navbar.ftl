@@ -16,6 +16,15 @@
                     <a class="nav-link" href="${refMain}">Головна </a>
                 </li>
                 <#if exists>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Пошук
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="searchDropdown">
+                        <li><a class="dropdown-item" href="${refDictionary}">Слів</a></li>
+                        <li><a class="dropdown-item" href="${refUserSearch}">Користувачів</a></li>
+                    </ul>
+                </li>
                 <li class="nav-item active">
                     <a class="nav-link" href="${refProfile}">Профіль</a>
                 </li>

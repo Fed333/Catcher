@@ -2,7 +2,6 @@ package com.example.catcher.service;
 
 import com.example.catcher.algorithms.BinarySearch;
 import com.example.catcher.algorithms.EditorialDistance;
-import com.example.catcher.algorithms.SortOrder;
 import com.example.catcher.algorithms.Sorts;
 import com.example.catcher.domain.*;
 import com.example.catcher.dto.Task1QuestionsRequest;
@@ -10,9 +9,6 @@ import com.example.catcher.repos.CompletedTestRepo;
 import com.example.catcher.repos.ProgressWordRepo;
 import com.example.catcher.repos.TestQuestionRepo;
 import com.example.catcher.repos.UserRepo;
-import com.sun.istack.NotNull;
-import com.sun.xml.bind.v2.util.EditDistance;
-import org.aspectj.weaver.ast.Test;
 import org.hibernate.Hibernate;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +17,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.naming.OperationNotSupportedException;
+import javax.transaction.NotSupportedException;
 import java.io.File;
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,6 +43,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private TestQuestionRepo testQuestionRepo;
+
+    @Autowired
+    private ProgressWordService progressWordService;
 
     @Value("${upload.path}")
     private String uploadPath;
@@ -135,10 +134,10 @@ public class UserService implements UserDetailsService {
 
         if (wordFilter!= null && !wordFilter.isEmpty()) {
             if (languageFilter.equals("English")) {
-                vocabulary = searchBy(user, wordFilter, levelsFilter, Word::getWord);
+                vocabulary = searchUserVocabularyBy(user, wordFilter, levelsFilter, Word::getWord);
             }
             else if (languageFilter.equals("Ukrainian")){
-                vocabulary=searchBy(user, wordFilter, levelsFilter, Word::getTranslation);
+                vocabulary= searchUserVocabularyBy(user, wordFilter, levelsFilter, Word::getTranslation);
             }
         }
         else{
@@ -153,7 +152,7 @@ public class UserService implements UserDetailsService {
         return vocabulary;
     }
 
-    private List<ProgressWord> searchBy(User user, String filter, Set<Level> levelsFilter, WordService.WordAttributeCriterion criterion){
+    private List<ProgressWord> searchUserVocabularyBy(User user, String filter, Set<Level> levelsFilter, WordService.WordAttributeCriterion criterion){
 
         LinkedList<ProgressWord> found = new LinkedList<>();
         Pattern pattern = Pattern.compile(filter, Pattern.CASE_INSENSITIVE);
@@ -338,4 +337,45 @@ public class UserService implements UserDetailsService {
         }
         return testQuestions;
     }
+
+    public List<User> searchUsersBy(String login, boolean filterSearch, String name, String phone, String email, Set<Level> levels) {
+        List<User> users = null;
+        if (!filterSearch && login != null && !login.isEmpty()){
+            users = userRepo.findAllByLogin(login);
+        }
+        else {
+            users = new LinkedList<>();
+            List<User> allUsers = userRepo.findAll();
+            for (User u: allUsers) {
+                if (isSuitable(u, name, phone, email, levels)){
+                    users.add(u);
+                }
+            }
+        }
+        return users;
+    }
+
+    private boolean isSuitable(User user, String name, String phone, String email, Set<Level> levels) {
+        if (user == null){
+            return false;
+        }
+
+        boolean suitable = true;
+        if (levels != null && !levels.isEmpty()){
+            suitable = levels.contains(user.getLevel());
+        }
+        if (name != null && !name.isEmpty() && suitable) {
+            suitable = (user.getName() != null && !user.getName().isEmpty()) && Pattern.compile(name, Pattern.CASE_INSENSITIVE).matcher(user.getName()).find();
+        }
+        if (suitable && phone != null && !phone.isEmpty()){
+            suitable = phone.replaceAll("^\\+38", "").equals(user.getPhone().replaceAll("^\\+38", ""));
+        }
+        if (suitable && email != null && !email.isEmpty()){
+            suitable = Pattern.matches(email, user.getEmail());
+        }
+
+        return suitable;
+    }
+
+
 }
